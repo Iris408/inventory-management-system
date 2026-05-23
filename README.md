@@ -50,19 +50,6 @@ This project focuses on practical full-stack engineering concepts including:
 
 ---
 
-### Frontend
-
-- React inventory dashboard
-- Tailwind responsive UI
-- Search and category filtering
-- Sorting controls
-- Analytics cards
-- Real-time API integration
-- Edit/Delete functionality
-- Loading and error handling
-
----
-
 ## API Endpoints
 
 | Method | Endpoint | Description |
@@ -90,8 +77,16 @@ This project focuses on practical full-stack engineering concepts including:
 
 ### Dashboard
 
+<p align="left">
+  <img src="./screenshots/dashboard.png" width="300"/>
+</p>
+
 <p align="center">
-  <img src="./screenshots/dashboard.png" width="700"/>
+  <img src="./screenshots/new_item.png" width="300"/>
+</p>
+
+<p align="right">
+  <img src="./screenshots/edit_item.png" width="300"/>
 </p>
 
 ---
