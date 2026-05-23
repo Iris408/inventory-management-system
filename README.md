@@ -41,7 +41,7 @@ This project focuses on practical full-stack engineering concepts including:
 ## Tech Stack | 技術スタック 
 
 | Frontend | Backend | Database | DevOps |
-|---|---|---|
+|---|---|---|---|
 | React | FastAPI | PostgreSQL | Docker |
 | TypeScript | Python | SQLAlchemy | Docker Compose |
 | Tailwind CSS | REST APIs | | Git/GitHub |
