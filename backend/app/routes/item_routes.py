@@ -316,7 +316,7 @@ def get_item(
 
         )
 
-    return formar_item_response(item)
+    return format_item_response(item)
 
 @router.post("/items", response_model=ItemResponse)
 def create_item(
