@@ -3,14 +3,13 @@ from datetime import datetime
 
 class ItemCreate(BaseModel):
 
-    id: int
     name: str
     category: str
     quantity: int
     price: float
 
     class Config:
-        from_atrributes = True
+        from_attributes = True
 
 class ItemResponse(BaseModel):
 
