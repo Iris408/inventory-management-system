@@ -14,16 +14,41 @@ This project focuses on practical full-stack engineering concepts including:
 
 ---
 
-## Features
+## Tech Stack | 技術スタック
 
-### Backend
-- REST API CRUD operations
-- PostgreSQL database integration
-- SQLAlchemy ORM
-- Search and filtering
-- Sorting and analytics
-- Created/updated timestamps
-- Docker containerisation
+| Frontend | Backend | Database | DevOps |
+|---|---|---|---|
+| React | FastAPI | PostgreSQL | Docker |
+| TypeScript | Python | SQLAlchemy | Docker Compose |
+| Tailwind CSS | REST APIs | | Git/GitHub |
+
+---
+
+## Architecture
+
+| Layer | Technology |
+|---|---|
+| Frontend | React + TypeScript + Tailwind CSS |
+| Backend | FastAPI + Python |
+| Database | PostgreSQL + SQLAlchemy |
+| DevOps | Docker + Docker Compose |
+
+---
+
+## Dashboard Features
+
+| Backend | Frontend |
+|---|---|
+| REST API CRUD operations | React inventory dashboard |
+| PostgreSQL database integration | Tailwind responsive UI |
+| SQLAlchemy ORM | Search and category filtering |
+| Search and filtering | Sorting controls |
+| Sorting and analytics | Analytics cards |
+| Created/updated timestamps | Real-time API integration |
+| Docker containerisation | Edit/Delete functionality |
+| RESTful API architecture | Loading and error handling |
+
+---
 
 ### Frontend
 
@@ -38,27 +63,6 @@ This project focuses on practical full-stack engineering concepts including:
 
 ---
 
-## Tech Stack | 技術スタック 
-
-| Frontend | Backend | Database | DevOps |
-|---|---|---|---|
-| React | FastAPI | PostgreSQL | Docker |
-| TypeScript | Python | SQLAlchemy | Docker Compose |
-| Tailwind CSS | REST APIs | | Git/GitHub |
-
----
-
-## Dashboard Features
-
-- Inventory analytics
-- Product status tracking
-- Responsive UI
-- Dynamic filtering
-- CRUD management
-- Real-time updates
-
----
-
 ## API Endpoints
 
 | Method | Endpoint | Description |
@@ -70,7 +74,7 @@ This project focuses on practical full-stack engineering concepts including:
 
 ---
 
-## Future Improvements
+## Dashboard Features
 
 - JWT Authentication
 - AWS Deployment
@@ -86,7 +90,10 @@ This project focuses on practical full-stack engineering concepts including:
 
 ### Dashboard
 
-![Inventory Dashboard](./screenshots/dashboard.png)
+<p align="center">
+  <img src="./screenshots/dashboard.png" width="700"/>
+</p>
+
 ---
 
 ## Running Locally
@@ -103,6 +110,19 @@ docker-compose up --build
 npm install
 npm run dev
 ```
+---
+
+## Future Improvements
+
+- JWT Authentication
+- AWS Deployment
+- CI/CD Pipeline
+- Terraform Infrastructure
+- Kubernetes Deployment
+- Role-based access control
+- Charts and advanced analytics
+
+---
 
 ## Author
 
