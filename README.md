@@ -84,7 +84,9 @@ This project focuses on practical full-stack engineering concepts including:
 
 ## Screenshots
 
+### Dashboard
 
+![Inventory Dashboard](./screenshots/dashboard.png)
 ---
 
 ## Running Locally
@@ -102,4 +104,13 @@ npm install
 npm run dev
 ```
 
+## Author
 
+Built by Ashleigh Magloire
+GitHub: http://github.com/Iris408
+
+---
+
+## License
+
+This project is licensed under the MIT License.
