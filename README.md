@@ -107,6 +107,7 @@ npm run dev
 ## Author
 
 Built by Ashleigh Magloire
+
 GitHub: http://github.com/Iris408
 
 ---
