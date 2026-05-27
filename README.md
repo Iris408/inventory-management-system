@@ -71,6 +71,16 @@ This project focuses on practical full-stack engineering concepts including:
 - Role-based access control
 - Charts and advanced analytics
 
+### Inventory Status Feature
+
+The dashboard calculates stock status automatically based on item quantity:
+
+- `0` = Out of Stock
+- `1–5` = Low Stock
+- `6+` = In Stock
+
+This status is returned by the FastAPI backend and displayed in the React dashboard.
+
 ---
 
 ## Screenshots
