@@ -9,3 +9,5 @@ frontend/node_modules/
 frontend/dis/
 .git/
 CONTAINER_ISSUE_RECAP.md
+
+echo "CONTAINER_ISSUE_RECAP.md"
