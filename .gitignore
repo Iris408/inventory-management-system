@@ -1,13 +1,26 @@
-backend/app/__pycache__/
-*.pyc
+# EN: Environment variables
+# JP: 環境変数ファイル
 .env
 backend/.env
-backend/__pycache__/
-venv/
-.DS_Store
-frontend/node_modules/
-frontend/dis/
-.git/
-CONTAINER_ISSUE_RECAP.md
+frontend/.env
 
-echo "CONTAINER_ISSUE_RECAP.md"
+# EN: Python cache and virtual environment
+# JP: Pythonキャッシュと仮想環境
+__pycache__/
+backend/__pycache__/
+backend/app/__pycache__/
+*.pyc
+venv/
+
+# EN: Node dependencies and build output
+# JP: Node依存関係とビルド出力
+frontend/node_modules/
+frontend/dist/
+
+# EN: macOS system files
+# JP: macOSシステムファイル
+.DS_Store
+
+# EN: Local recap notes
+# JP: ローカル用の復習メモ
+CONTAINER_ISSUE_RECAP.md

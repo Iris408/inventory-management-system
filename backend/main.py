@@ -1,11 +1,17 @@
 from fastapi import FastAPI
-from app.database import engine
-from app.models.item_model import Item
-from app.routes.item_routes import router
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.database import Base
+from app.database import engine
+from app.models.item_model import Item
+from app.models.user_model import User
+from app.routes.item_routes import router as item_router
+from app.routes.auth_routes import router as auth_router
+
 app = FastAPI()
-app.include_router(router)
+app.include_router(item_router)
+app.include_router(auth_router, prefix='/auth', tags=["Auth"])
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -18,7 +24,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-Item.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine, checkfirst=True)
 
 @app.get("/")
 def home():
