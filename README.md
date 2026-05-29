@@ -7,8 +7,10 @@ The dashboard provides real-time inventory tracking, analytics, product manageme
 This project focuses on practical full-stack engineering concepts including:
 - API development
 - Database-driven applications
+- JWT authentication and protected API routes
+- Swagger/OAuth2 login support
 - React state management
-- Docker containerisation
+- Docker containerization
 - Backend/frontend integration
 - Responsive UI design
 
@@ -24,14 +26,15 @@ This project focuses on practical full-stack engineering concepts including:
 
 ---
 
-## Architecture
+## Project Structure
 
-| Layer | Technology |
-|---|---|
-| Frontend | React + TypeScript + Tailwind CSS |
-| Backend | FastAPI + Python |
-| Database | PostgreSQL + SQLAlchemy |
-| DevOps | Docker + Docker Compose |
+inventory-management-system/
+├── backend/        # FastAPI backend, database models, schemas, and API routes
+├── frontend/       # React + TypeScript dashboard interface
+├── screenshots/    
+├── docker-compose.yml
+├── README.md
+└── LICENSE
 
 ---
 
@@ -54,22 +57,14 @@ This project focuses on practical full-stack engineering concepts including:
 
 | Method | Endpoint | Description |
 |---|---|---|
+| POST | /auth/register | Register a new user |
+| POST | /auth/login | Login and receive JWT access token |
 | GET | /items | Get all items |
 | POST | /items | Create item |
 | PUT | /items/{id} | Update item |
 | DELETE | /items/{id} | Delete item |
 
 ---
-
-## Dashboard Features
-
-- JWT Authentication
-- AWS Deployment
-- CI/CD Pipeline
-- Terraform Infrastructure
-- Kubernetes Deployment
-- Role-based access control
-- Charts and advanced analytics
 
 ### Inventory Status Feature
 
@@ -79,13 +74,9 @@ The dashboard calculates stock status automatically based on item quantity:
 - `1–5` = Low Stock
 - `6+` = In Stock
 
-This status is returned by the FastAPI backend and displayed in the React dashboard.
+The status is returned by the FastAPI backend and displayed in the React dashboard.
 
----
-
-## Screenshots
-
-### Dashboard
+### Screenshots
 
 <p align="left">
   <img src="./screenshots/dashboard.png" width="300"/>
@@ -119,7 +110,6 @@ npm run dev
 
 ## Future Improvements
 
-- JWT Authentication
 - AWS Deployment
 - CI/CD Pipeline
 - Terraform Infrastructure
@@ -134,9 +124,3 @@ npm run dev
 Built by Ashleigh Magloire
 
 GitHub: http://github.com/Iris408
-
----
-
-## License
-
-This project is licensed under the MIT License.
