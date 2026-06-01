@@ -27,7 +27,7 @@ This project focuses on practical full-stack engineering concepts including:
 ---
 
 ## Project Structure
-
+```markdown
 inventory-management-system/
 ├── backend/        # FastAPI backend, database models, schemas, and API routes
 ├── frontend/       # React + TypeScript dashboard interface
@@ -35,7 +35,7 @@ inventory-management-system/
 ├── docker-compose.yml
 ├── README.md
 └── LICENSE
-
+```
 ---
 
 ## Dashboard Features
