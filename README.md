@@ -37,8 +37,8 @@ This project focuses on practical full-stack engineering concepts including: API
 ## Project Structure
 ```text
 inventory-management-system/
-├── backend/        # FastAPI backend, database models, schemas, and API routes
-├── frontend/       # React + TypeScript dashboard interface
+├── backend/       
+├── frontend/       
 ├── screenshots/    
 ├── docker-compose.yml
 ├── README.md
@@ -63,16 +63,15 @@ inventory-management-system/
 
 ## Current Status
 
-✅ React + TypeScript frontend
-✅ FastAPI backend
-✅ PostgreSQL database integration
-✅ CRUD operations
-✅ Search and filtering
-✅ Analytics dashboard
-✅ Dockerised backend services
-🚧 Frontend Docker support (in progress)
-🚧 CI/CD pipeline (planned)
-🚧 AWS deployment (planned)
+| Complete | In progress |
+| --- | --- |
+| ✅ React + TypeScript frontend | 🚧 Frontend Docker support |
+| ✅ FastAPI backend | 🚧 CI/CD pipeline |
+| ✅ PostgreSQL database integration | 🚧 AWS deployment |
+| ✅ CRUD operations | |
+| ✅ Search and filtering | |
+| ✅ Analytics dashboard | |
+| ✅ Dockerised backend services | |
 
 ---
 
