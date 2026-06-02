@@ -8,6 +8,66 @@ This project focuses on practical full-stack engineering concepts including: API
 
 ---
 
+## Tech Stack | 技術スタック
+
+| Frontend | Backend | Database | DevOps |
+|---|---|---|---|
+| React | FastAPI | PostgreSQL | Docker |
+| TypeScript | Python | SQLAlchemy | Docker Compose |
+| Tailwind CSS | REST APIs | | Git/GitHub |
+
+---
+
+## Project Structure
+```markdown
+inventory-management-system/
+├── backend/        # FastAPI backend, database models, schemas, and API routes
+├── frontend/       # React + TypeScript dashboard interface
+├── screenshots/    
+├── docker-compose.yml
+├── README.md
+└── LICENSE
+```
+---
+
+## Dashboard Features
+
+| Backend | Frontend |
+|---|---|
+| REST API CRUD operations | React inventory dashboard |
+| PostgreSQL database integration | Tailwind responsive UI |
+| SQLAlchemy ORM | Search and category filtering |
+| Search and filtering | Sorting controls |
+| Sorting and analytics | Analytics cards |
+| Created/updated timestamps | Real-time API integration |
+| Docker containerisation | Edit/Delete functionality |
+| RESTful API architecture | Loading and error handling |
+
+---
+
+## API Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | /auth/register | Register a new user |
+| POST | /auth/login | Login and receive JWT access token |
+| GET | /items | Get all items |
+| POST | /items | Create item |
+| PUT | /items/{id} | Update item |
+| DELETE | /items/{id} | Delete item |
+
+---
+
+### Inventory Status Feature
+
+The dashboard calculates stock status automatically based on item quantity:
+
+- `0` = Out of Stock
+- `1–5` = Low Stock
+- `6+` = In Stock
+
+The status is returned by the FastAPI backend and displayed in the React dashboard.
+
 ### Screenshots
 
 <p align="left">
