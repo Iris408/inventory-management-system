@@ -1,49 +1,69 @@
-# Inventory Management System | 在庫管理システム
+# Inventory Management System
 
-A full-stack inventory management system built with React, FastAPI, PostgreSQL, and Docker.
+A full-stack inventory management system built with React, FastAPI, PostgreSQL, Docker, Docker Compose and JWT Authentication.
 
-The dashboard provides real-time inventory tracking, analytics, product management, filtering, sorting, and stock monitoring through a responsive frontend interface connected to a REST API backend.
+The dashboard provides inventory tracking, analytics, product management, filtering, sorting, and stock monitoring through a responsive frontend interface connected to a REST API backend.
 
-This project focuses on practical full-stack engineering concepts including: API development, Database-driven applications, JWT authentication and protected API routes, Swagger/OAuth2 login support, React state management, Docker containerization, Backend/frontend integration
+# 在庫管理システム
+
+React、FastAPI、PostgreSQL、Docker、Docker Compose、およびJWT認証を使用して構築されたフルスタックの在庫管理システム。
+
+ダッシュボードは、レスポンシブなフロントエンドインターフェースとREST APIバックエンドを介して、リアルタイムの在庫追跡、分析、製品管理、フィルタリング、ソート、在庫監視機能を提供します。
 
 ---
 
 ### Screenshots
 
-<p align="left">
+<p align="top left">
   <img src="./screenshots/dashboard.png" width="300"/>
 </p>
 
-<p align="center">
+<p align="bottom left">
   <img src="./screenshots/new_item.png" width="300"/>
 </p>
 
-<p align="right">
+<p align="top right">
   <img src="./screenshots/edit_item.png" width="300"/>
 </p>
 
----
-
-## Tech Stack | 技術スタック
-
-| Frontend | Backend | Database | DevOps |
-|---|---|---|---|
-| React | FastAPI | PostgreSQL | Docker |
-| TypeScript | Python | SQLAlchemy | Docker Compose |
-| Tailwind CSS | REST APIs | | Git/GitHub |
+<p align="bottom right">
+  <img src="./screenshots/dashboard_login.png" width="300"/>
+</p>   
 
 ---
 
-## Project Structure
-```text
-inventory-management-system/
-├── backend/       
-├── frontend/       
-├── screenshots/    
-├── docker-compose.yml
-├── README.md
-└── LICENSE
-```
+## Current Status
+
+| Area | Status |
+|---|---|
+| React + TypeScript frontend | ✅ Complete |
+| FastAPI backend | ✅ Complete |
+| PostgreSQL database integration | ✅ Complete |
+| CRUD operations | ✅ Complete |
+| Search and filtering | ✅ Complete |
+| Analytics dashboard | ✅ Complete |
+| Dockerised backend services | ✅ Complete |
+| Frontend Docker support | ✅ Complete |
+| Frontend login and token storage | ✅ Complete |
+| Authenticated frontend CRUD requests | ✅ Complete |
+| CI/CD pipeline | 🚧 Planned |
+| AWS deployment | 🚧 Planned |
+
+## Recent Update
+The Inventory Management System now includes a frontend authentication flow for protected inventory routes.
+
+この在庫管理システムには、保護された在庫ルートのためのフロントエンド認証フローが追加されました。
+
+### Updates
+
+- Added frontend login and token storage
+- Added authenticated API requests for inventory data
+- Fixed frontend `401 Unauthorized` errors
+- Fixed add item functionality from the frontend dashboard
+- Fixed edit and update item functionality from the frontend dashboard
+- Confirmed delete item functionality works from the frontend dashboard
+- Confirmed Docker Compose backend/frontend integration works
+
 ---
 
 ## Features
@@ -56,39 +76,37 @@ inventory-management-system/
 | Search and filtering | Sorting controls |
 | Sorting and analytics | Analytics cards |
 | Created/updated timestamps | Real-time API integration |
-| Docker containerisation | Edit/Delete functionality |
+| Docker containerisation | Add/Edit/Delete functionality |
 | RESTful API architecture | Loading and error handling |
 
 ---
 
-## Current Status
+## Authentication Notes
 
-| Complete | In progress |
-| --- | --- |
-| ✅ React + TypeScript frontend | 🚧 Frontend Docker support |
-| ✅ FastAPI backend | 🚧 CI/CD pipeline |
-| ✅ PostgreSQL database integration | 🚧 AWS deployment |
-| ✅ CRUD operations | |
-| ✅ Search and filtering | |
-| ✅ Analytics dashboard | |
-| ✅ Dockerised backend services | |
+The inventory routes are protected and require a valid JWT token. The frontend stores the token after login and send it with protected requests using the **Authorization** header:
+```text
+Authorization: Bearer <token>
+```
+This allows the dashboard to securely load, add, edit, update and delete inventory items.
 
----
+在庫管理ルートは保護されており、有効なJWTトークンが必要です。フロントエンドはログイン後にトークンを保存し、**Authorization**ヘッダーを使用して保護されたリクエストとともに送信します。
 
-## API Endpoints
-
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | /auth/register | Register a new user |
-| POST | /auth/login | Login and receive JWT access token |
-| GET | /items | Get all items |
-| POST | /items | Create item |
-| PUT | /items/{id} | Update item |
-| DELETE | /items/{id} | Delete item |
+```text
+Authorization: Bearer <トークン>
+```
+これにより、ダッシュボードは在庫アイテムの安全な読み込み、追加、編集、更新、削除が可能になります。
 
 ---
 
-## Installation
+# Installation
+
+## Docker Ports
+
+| Service | Local URL |
+| Frontend | http://localhost:5173 |
+| Backend API | http://localhost:8000 |
+| Swagger UI | http://localhost:8000/docs |
+| PostgreSQL | localhost:5433 |
 
 ### Clone Repository
 ```bash
@@ -117,15 +135,3 @@ npm run dev
 3. Open the frontend dashboard.
 4. Create, edit, update and delete inventory items.
 5. Use analytics cards, filtering and sorting controls to manage inventory.
-
----
-
-## Future Improvements
-
-- JWT Authentication
-- Frontend docker containerization
-- Docker Compose Full Stack
-- CI/CD Pipeline
-- AWS Deployment
-- Terraform 
-- Kubernetes
