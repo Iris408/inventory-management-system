@@ -290,7 +290,6 @@ def get_item(
 
     return format_item_response(item)
 
-
 @router.post("/items", response_model=ItemResponse)
 def create_item(
     item: ItemCreate,

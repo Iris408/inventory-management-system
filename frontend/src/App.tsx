@@ -37,6 +37,8 @@ function App() {
     price: 0,
   })
 
+  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbjEyMyIsInJvbGUiOiJBZG1pbiIsImV4cCI6MTc4MDQyMjQ1MX0.AhsJjWVk0MZDPYO_He-JD7HT5jJwGwyTWhnaA57O1DI"
+
   async function fetchItems() {
     try {
       setError(null)
@@ -50,7 +52,7 @@ function App() {
       params.append("order", order)
 
       const response = await fetch(
-        `http://127.0.0.1:8000/items?${params.toString()}`
+        `http://localhost:8000/items?${params.toString()}`
       )
 
       if (!response.ok) {
@@ -72,13 +74,14 @@ function App() {
       setInitialLoad(false)
     }
   }
-
+    
   async function addItem() {
     try {
-      const response = await fetch("http://127.0.0.1:8000/items", {
+      const response = await fetch("http://localhost:8000/items", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify(form),
       })
@@ -107,7 +110,7 @@ function App() {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/items/${editItem.id}`,
+        `http://localhost:8000/items/${editItem.id}`,
         {
           method: "PUT",
           headers: {
@@ -136,7 +139,7 @@ function App() {
 
   async function deleteItem(id: number) {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/items/${id}`, {
+      const response = await fetch(`http://localhost:8000/items/${id}`, {
         method: "DELETE",
       })
 
