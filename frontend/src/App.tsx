@@ -18,6 +18,15 @@ type NewItem = {
   price: number
 }
 
+type LoginForm = {
+  username: string
+  password: string
+}
+
+const API_URL = "http://localhost:8000"
+// same as the backend login route
+const LOGIN_URL = `${API_URL}/auth/login`
+
 function App() {
   const [initialLoad, setInitialLoad] = useState(true)
   const [sortBy, setSortBy] = useState("id")
@@ -37,7 +46,72 @@ function App() {
     price: 0,
   })
 
-  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbjEyMyIsInJvbGUiOiJBZG1pbiIsImV4cCI6MTc4MDQyMjQ1MX0.AhsJjWVk0MZDPYO_He-JD7HT5jJwGwyTWhnaA57O1DI"
+  const [token, setToken] = useState<string | null>(() => 
+    localStorage.getItem("inventory_token")
+  )
+
+  const [loginForm, setLoginForm] = useState<LoginForm>({
+    username: "",
+    password: "",
+  })
+
+  const [loginError, setLoginError] = useState<string | null>(null)
+
+  async function login() {
+    try {
+      setLoginError(null)
+
+      const formData = new URLSearchParams()
+      formData.append("username", loginForm.username)
+      formData.append("password", loginForm.password)
+
+      const response = await fetch(LOGIN_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: formData,
+      })
+
+      if (!response.ok) {
+        throw new Error("Login failed")
+      }
+
+      const data = await response.json()
+
+      const accessToken = data.access_token || data.token
+
+      if (!accessToken) {
+        throw new Error("No token returned")
+      }
+
+      localStorage.setItem("inventory_token", accessToken)
+      setToken(accessToken)
+      
+      setLoginForm({
+        username: "",
+        password: "",
+      })
+    } catch {
+      setLoginError("Login failed. Check your credentials and try again.")
+    }
+  }
+
+  async function logout() {
+    localStorage.removeItem("inventory_token")
+    setToken(null)
+    setItems([])
+  }
+
+  function getAuthHeaders() {
+    if (!token) {
+      throw new Error("No authentication token found")
+    }
+    return {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    }
+  }
 
   async function fetchItems() {
     try {
@@ -51,10 +125,21 @@ function App() {
       params.append("sort_by", sortBy)
       params.append("order", order)
 
-      const response = await fetch(
-        `http://localhost:8000/items?${params.toString()}`
+      if (!token) {
+        setError("Please log in to view inventory.")
+        return
+      }
+
+      const response = await fetch(`${API_URL}/items?${params.toString()}`, 
+        { headers: getAuthHeaders(),
+        }
       )
 
+      if (response.status === 401) {
+        logout()
+        throw new Error("Unauthorized. Please log in again.")
+      }
+      
       if (!response.ok) {
         throw new Error("Failed to fetch")
       }
@@ -77,16 +162,24 @@ function App() {
     
   async function addItem() {
     try {
-      const response = await fetch("http://localhost:8000/items", {
+      setError(null)
+
+      const itemData = {
+        name: form.name,
+        category: form.category,
+        quantity: Number(form.quantity),
+        price: Number(form.price),
+      }
+
+      const response = await fetch(`${API_URL}/items`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify(form),
+        headers: getAuthHeaders(),
+        body: JSON.stringify(itemData),
       })
 
       if (!response.ok) {
+        const errorText = await response.text()
+        console.error("Add item failed:", response.status,errorText)
         throw new Error("Failed to add item")
       }
 
@@ -98,8 +191,7 @@ function App() {
       })
 
       setShowForm(false)
-
-      fetchItems()
+      await fetchItems()
     } catch {
       setError("Could not add item.")
     }
@@ -109,29 +201,32 @@ function App() {
     if (!editItem) return
 
     try {
+      setError(null)
+
+      const itemData = {
+        name: editItem.name,
+        category: editItem.category,
+        quantity: Number(editItem.quantity),
+        price: Number(editItem.price),
+      }
+      
       const response = await fetch(
-        `http://localhost:8000/items/${editItem.id}`,
+        `${API_URL}/items/${editItem.id}`,
         {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: editItem.name,
-            category: editItem.category,
-            quantity: editItem.quantity,
-            price: editItem.price,
-          }),
+          headers: getAuthHeaders(),
+          body: JSON.stringify(itemData),
         }
       )
 
       if (!response.ok) {
+        const errorText = await response.text()
+        console.error("Update item failed:", response.status, errorText)
         throw new Error("Failed to update")
       }
 
       setEditItem(null)
-
-      fetchItems()
+      await fetchItems()
     } catch {
       setError("Could not update item.")
     }
@@ -139,28 +234,75 @@ function App() {
 
   async function deleteItem(id: number) {
     try {
-      const response = await fetch(`http://localhost:8000/items/${id}`, {
+      const response = await fetch(`${API_URL}/items/${id}`, {
         method: "DELETE",
+        headers: getAuthHeaders(),
       })
 
       if (!response.ok) {
         throw new Error("Failed to delete item")
       }
 
-      fetchItems()
+      await fetchItems()
     } catch {
       setError("Could not delete item.")
     }
   }
 
   useEffect(() => {
-    fetchItems()
-  }, [search, category, sortBy, order])
+    if (token) {
+      fetchItems()
+    } else {
+      setInitialLoad(false)
+    }
+  }, [token, search, category, sortBy, order])
 
   function getStatusStyle(status: string) {
     if (status === "In Stock") return "bg-green-100 text-green-800"
     if (status === "Low Stock") return "bg-yellow-100 text-yellow-800"
     return "bg-red-100 text-red-800"
+  }
+
+  if (!token) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-8">
+        <div className="bg-white rounded-xl shadow p-8 w-full max-w-md">
+          <h1 className="text-2xl font-bold text -gray-800 mb-6 text-center">
+            Inventory Dashboard Login
+          </h1>
+
+          {loginError && (
+            <div className="bg-red-100 text-red-700 px-4 py-3 rounded-lg mb-4">
+              {loginError}
+            </div>
+          )}
+
+          <div className="space-y-4">
+            <input
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Username"
+              value={loginForm.username}
+              onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })}
+            />
+
+            <input
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Password"
+              type="password"
+              value={loginForm.password}
+              onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+            />
+
+            <button
+              onClick={login}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition w-full"
+            >
+              Login
+            </button>
+          </div>
+        </div>
+      </div> 
+    )
   }
 
   if (initialLoad) {
@@ -179,12 +321,47 @@ function App() {
           Inventory Dashboard
         </h1>
 
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-        >
-          {showForm ? "Cancel" : "+ Add Item"}
-        </button>
+        {!token ? (
+          <div className="flex items-center gap-2">
+            <input
+              placeholder="Username"
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              value={loginForm.username}
+              onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })}
+            />
+
+            <input
+              placeholder="Password"
+              type="password"
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              value={loginForm.password}
+              onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+            />
+
+            <button
+              onClick={login}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+            >
+              Login
+            </button>
+          </div>
+        ) : (
+        <div className="flex gap-3"> 
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+          >
+            {showForm ? "Cancel" : "+ Add Item"}
+          </button>
+
+          <button
+            onClick={logout}
+            className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition"
+          >
+            Logout
+          </button>
+        </div>
+        )}
       </div>
 
       {/* Error Banner */}
