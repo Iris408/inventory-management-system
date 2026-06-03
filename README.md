@@ -14,21 +14,32 @@ React、FastAPI、PostgreSQL、Docker、Docker Compose、およびJWT認証を�
 
 ### Screenshots
 
-<p align="top left">
-  <img src="./screenshots/dashboard.png" width="300"/>
-</p>
-
-<p align="bottom left">
-  <img src="./screenshots/new_item.png" width="300"/>
-</p>
-
-<p align="top right">
-  <img src="./screenshots/edit_item.png" width="300"/>
-</p>
-
-<p align="bottom right">
-  <img src="./screenshots/dashboard_login.png" width="300"/>
-</p>   
+<table>
+  <tr>
+    <td>
+      <img src="./screenshots/dashboard.png" width="400"/>
+      <br/>
+      <strong>Dashboard Overview</strong>
+    </td>
+    <td>
+      <img src="./screenshots/dashboard_login.png" width="400"/>
+      <br/>
+      <strong>Login Page</strong>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src="./screenshots/new_item.png" width="400"/>
+      <br/>
+      <strong>Add New Item</strong>
+    </td>
+    <td>
+      <img src="./screenshots/edit_item.png" width="400"/>
+      <br/>
+      <strong>Edit Item</strong>
+    </td>
+  </tr>
+</table>
 
 ---
 
@@ -103,6 +114,7 @@ Authorization: Bearer <トークン>
 ## Docker Ports
 
 | Service | Local URL |
+| --- | --- |
 | Frontend | http://localhost:5173 |
 | Backend API | http://localhost:8000 |
 | Swagger UI | http://localhost:8000/docs |
