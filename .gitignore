@@ -1,6 +1,7 @@
 # EN: Environment variables
 # JP: 環境変数ファイル
 .env
+.env.local
 backend/.env
 frontend/.env
 
