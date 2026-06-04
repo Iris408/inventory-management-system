@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Base
 from app.database import engine
+
 from app.models.item_model import Item
 from app.models.user_model import User
 from app.routes.item_routes import router as item_router
