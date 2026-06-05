@@ -1,0 +1,86 @@
+name: Backend CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  backend-check:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: inventory_test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d inventory_test_db"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    defaults:
+      run:
+        working-directory: backend
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/inventory_test_db
+      SECRET_KEY: github-actions-test-secret
+      CORS_ORIGINS: http://localhost:5173
+
+    steps:
+      # EN: Check out the repository code
+      # JP: リポジトリのコードを取得します
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # EN: Set up Python for the FastAPI backend
+      # JP: FastAPIバックエンド用にPythonを設定します
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # EN: Install PostgreSQL client tools for database readiness checks
+      # JP: データベースの起動確認用にPostgreSQLクライアントをインストールします
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      # EN: Install backend dependencies
+      # JP: バックエンドの依存関係をインストールします
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # EN: Wait until PostgreSQL is ready
+      # JP: PostgreSQLが起動するまで待機します
+      - name: Wait for PostgreSQL
+        run: |
+          for i in {1..10}; do
+            pg_isready -h localhost -p 5432 -U postgres -d inventory_test_db && break
+            echo "Waiting for PostgreSQL..."
+            sleep 3
+          done
+
+      # EN: Check Python syntax
+      # JP: Pythonコードの構文を確認します
+      - name: Check Python syntax
+        run: |
+          python -m compileall app main.py
+
+      # EN: Confirm the FastAPI app imports successfully
+      # JP: FastAPIアプリが正常にインポートできることを確認します
+      - name: Check FastAPI app import
+        run: |
+          python -c "from main import app; print('FastAPI app imported successfully')"
