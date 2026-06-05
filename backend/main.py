@@ -20,7 +20,7 @@ cors_origins = os.getenv(
     "http://localhost:5173,http://localhost:5174"
 ).split(",")
 
-cors_origin = [origin.strip() for origin in cors_origins]
+cors_origin = [origin.strip() for origin in cors_origins if origin.strip()]
 
 app.add_middleware(
     CORSMiddleware,

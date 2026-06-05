@@ -43,6 +43,13 @@ React、FastAPI、PostgreSQL、Docker、Docker Compose、およびJWT認証を�
 
 ---
 
+## Live Demo
+
+Frontend Dashboard: `your-vercel-link`
+Backend API Docs: `https://inventory-management-system-1wcw.onrender.com/docs`
+
+---
+
 ## Current Status
 
 | Area | Status |
