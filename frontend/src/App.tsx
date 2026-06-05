@@ -61,19 +61,20 @@ function App() {
     try {
       setLoginError(null)
 
-      const formData = new URLSearchParams()
-      formData.append("username", loginForm.username)
-      formData.append("password", loginForm.password)
-
       const response = await fetch(LOGIN_URL, {
         method: "POST",
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/json",
         },
-        body: formData,
+        body: JSON.stringify({
+          username: loginForm.username,
+          password: loginForm.password,
+        }),
       })
 
       if (!response.ok) {
+        const errorText = await response.text()
+        console.error("Login Failed:", response.status, errorText)
         throw new Error("Login failed")
       }
 
