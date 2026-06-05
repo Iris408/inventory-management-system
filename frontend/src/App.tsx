@@ -62,15 +62,16 @@ function App() {
     try {
       setLoginError(null)
 
+      const formData = new URLSearchParams()
+      formData.append("username", loginForm.username)
+      formData.append("password", loginForm.password)
+
       const response = await fetch(LOGIN_URL, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: JSON.stringify({
-          username: loginForm.username,
-          password: loginForm.password,
-        }),
+        body: formData,
       })
 
       if (!response.ok) {
