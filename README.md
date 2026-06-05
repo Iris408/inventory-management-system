@@ -66,8 +66,8 @@ The frontend is deployed on Vercel and connected to a FastAPI backend deployed o
 | Render backend deployment | ✅ Complete |
 | Vercel frontend deployment | ✅ Complete |
 | Frontend/backend production integration | ✅ Complete |
-| CI/CD pipeline | ✅ Complete  |
-| AWS deployment | 🚧 In progress |
+| CI checks | ✅ Complete  |
+| Automated Deployment | ✅ Managed by Vercel and Render |
 
 ## Recent Update
 
