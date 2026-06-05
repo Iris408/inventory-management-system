@@ -23,7 +23,8 @@ type LoginForm = {
   password: string
 }
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000"
+const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:8000").replace(/\/+$/,"")
+
 // same as the backend login route
 const LOGIN_URL = `${API_URL}/auth/login`
 
