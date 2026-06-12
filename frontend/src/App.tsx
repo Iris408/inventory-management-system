@@ -157,7 +157,7 @@ function App() {
 
       setCategories(unique)
     } catch {
-      setError("Could not load inventory. Is the backend running?")
+      setError("Could not load inventory. Please check your login or backend connection.")
     } finally {
       setInitialLoad(false)
     }
@@ -270,7 +270,7 @@ function App() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-8">
         <div className="bg-white rounded-xl shadow p-8 w-full max-w-md">
-          <h1 className="text-2xl font-bold text -gray-800 mb-6 text-center">
+          <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">
             Inventory Dashboard Login
           </h1>
 

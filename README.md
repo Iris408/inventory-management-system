@@ -90,7 +90,7 @@ This update confirms live frontend/backend integration, deployed authentication,
 - Updated CORS settings to allow Vercel frontend URL
 - Fixed Render backend database session dependency with `get_db`
 - Confirmed deployed FastAPI`/docs` route works
-- Fixed frontend login request format using `application/x-www-form-urlencoded
+- Fixed frontend login request format using `application/x-www-form-urlencoded`
 - Confirmed deployed frontend connects to deployed backend
 
 ---
@@ -111,12 +111,12 @@ This update confirms live frontend/backend integration, deployed authentication,
 
 ---
 
-## Authentication Notes / 認証につて
+## Authentication Notes / 認証について
 
 ### English
 
 Inventory routes are protected and require a valid JWT token. 
-The frontend stores the token after login and send it with protected requests using the `Authorization` header:
+The frontend stores the token after login and sends it with protected requests using the `Authorization` header:
 ```text
 Authorization: Bearer <token>
 ```
@@ -152,7 +152,7 @@ git clone https://github.com/Iris408/inventory-management-system.git
 cd inventory-management-system
 ```
 
-## Enviroments Variables / 環境変数
+## Environments Variables / 環境変数
 ### Backend
 Create an .env file inside the backend folder:
 ```bash
@@ -171,13 +171,13 @@ VITE_API_URL=http://localhost:8000
 ## Run with Docker
 From the project root:
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 If `docker compose` does not work, try:
 ```bash
 docker-compose up --build
 ```
-This starts the backend API and PostgreSQL database.
+This starts the frontend, backend API and PostgreSQL database.
 
 ## Run Locally / ローカル起動
 Open a new terminal:
