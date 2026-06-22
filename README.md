@@ -45,13 +45,15 @@ React、FastAPI、PostgreSQL、Docker、Docker Compose、およびJWT認証を�
 
 ## Live Demo
 
+Frontend Deployed on Vercel:
 [Inventory Frontend Dashboard](https://inventory-management-system-iris408.vercel.app/)
+
+Backend Deployed on Render:
 [Inventory Backend API Docs](https://inventory-management-system-1wcw.onrender.com/docs)
 
-The frontend is deployed on Vercel and connected to a FastAPI backend deployed on Render with PostgreSQL database storage.
----
-
 ## Current Status
+
+The frontend is deployed on Vercel and connected to a FastAPI backend deployed on Render with PostgreSQL database storage.
 
 The Inventory Management System is now deployed as a complete full-stack application. The React and TypeScript frontend is hosted on Vercel, while the FastAPI and PostgreSQL backend is hosted on Render.
 
