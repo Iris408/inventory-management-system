@@ -45,33 +45,13 @@ React、FastAPI、PostgreSQL、Docker、Docker Compose、およびJWT認証を�
 
 ## Live Demo
 
-Frontend Dashboard: `https://inventory-management-system-iris408.vercel.app/`
-Backend API Docs: `https://inventory-management-system-1wcw.onrender.com/docs`
+[Inventory Frontend Dashboard](https://inventory-management-system-iris408.vercel.app/)
+[Inventory Backend API Docs](https://inventory-management-system-1wcw.onrender.com/docs)
 
 The frontend is deployed on Vercel and connected to a FastAPI backend deployed on Render with PostgreSQL database storage.
 ---
 
 ## Current Status
-
-| Area | Status |
-|---|---|
-| React + TypeScript frontend | ✅ Complete |
-| FastAPI backend | ✅ Complete |
-| PostgreSQL database integration | ✅ Complete |
-| CRUD operations | ✅ Complete |
-| JWT login flow | ✅ Complete |
-| Protected inventory routes | ✅ Complete |
-| Authenticated frontend CRUD requests | ✅ Complete |
-| Frontend and Backend Docker support | ✅ Complete |
-| Render backend deployment | ✅ Complete |
-| Vercel frontend deployment | ✅ Complete |
-| Frontend/backend production integration | ✅ Complete |
-| CI checks | ✅ Complete  |
-| Automated Deployment | ✅ Managed by Vercel and Render |
-
-## Recent Update
-
-### English
 
 The Inventory Management System is now deployed as a complete full-stack application. The React and TypeScript frontend is hosted on Vercel, while the FastAPI and PostgreSQL backend is hosted on Render.
 
@@ -82,6 +62,26 @@ This update confirms live frontend/backend integration, deployed authentication,
 在庫管理システムは、完全なフルスタックアプリケーションとしてデプロイされました。ReactとTypeScriptで構築されたフロントエンドはVercelでホストされ、FastAPIとPostgreSQLで構成されたバックエンドはRenderでホストされています。
 
 今回のアップデートにより、フロントエンドとバックエンドの統合、認証機能、保護された在庫管理ルート、および本番環境でのCRUD機能が確認されました。
+
+### Completed
+- Item CRUD functionality
+- PostgreSQL database integration
+- FastAPI backend routes
+- React/TypeScript dashboard
+- Inventory filtering and sorting
+- Low-stock and stock status views
+- Analytics/statistics endpoints
+- Docker and Docker Compose setup
+- README and project documentation
+
+### Next Roadmap
+- Add JWT authentication
+- Protect inventory management routes
+- Add demo login users
+- Prepare deployment
+- Add backend and frontend CI/CD
+- Add screenshots and architecture notes
+- Improve mobile dashboard layout
 
 ### Recent Deployment Fixes
 - Replaced hardcoded frontend API URL with `VITE_API_URL`
