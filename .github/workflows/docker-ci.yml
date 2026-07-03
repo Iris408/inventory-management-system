@@ -1,0 +1,28 @@
+name: Docker CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  docker-checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker Compose services
+        run: |
+          if [ -f docker-compose.yml ]; then
+            docker compose build
+          elif [ -f compose.yml ]; then
+            docker compose -f compose.yml build
+          else
+            echo "No Docker Compose file found"
+            exit 1
+          fi
