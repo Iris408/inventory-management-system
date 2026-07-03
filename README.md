@@ -1,10 +1,11 @@
-# Inventory Management System
+![Backend CI](https://github.com/Iris408/log-intelligence-analyzer/actions/workflows/backend-ci.yml/badge.svg)
+![Docker CI](https://github.com/Iris408/inventory-management-system/actions/workflows/docker-ci.yml/badge.svg)
+
+# Inventory Management System / 在庫管理システム
 
 A full-stack inventory management system built with React, FastAPI, PostgreSQL, Docker, Docker Compose and JWT Authentication.
 
 The dashboard provides inventory tracking, analytics, product management, filtering, sorting, and stock monitoring through a responsive frontend interface connected to a REST API backend.
-
-# 在庫管理システム
 
 React、FastAPI、PostgreSQL、Docker、Docker Compose、およびJWT認証を使用して構築されたフルスタックの在庫管理システム。
 
