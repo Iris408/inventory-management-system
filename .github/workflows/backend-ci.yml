@@ -40,7 +40,7 @@ jobs:
       # EN: Check out the repository code
       # JP: リポジトリのコードを取得します
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       # EN: Set up Python for the FastAPI backend
       # JP: FastAPIバックエンド用にPythonを設定します
