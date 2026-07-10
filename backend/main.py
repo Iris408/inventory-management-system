@@ -17,7 +17,11 @@ app.include_router(auth_router, prefix='/auth', tags=["Auth"])
 
 cors_origins = os.getenv(
     "CORS_ORIGINS",
-    "http://localhost:5173,http://localhost:5174"
+    "http://localhost:5173",      # Bloom or older local frontend
+    "http://127.0.0.1:5173",
+    "http://localhost:5174",      # Inventory frontend
+    "http://127.0.0.1:5174",
+    "http://192.0.0.2:5174",
 ).split(",")
 
 cors_origin = [origin.strip() for origin in cors_origins if origin.strip()]

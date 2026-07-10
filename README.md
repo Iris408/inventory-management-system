@@ -1,201 +1,455 @@
-![Backend CI](https://github.com/Iris408/log-intelligence-analyzer/actions/workflows/backend-ci.yml/badge.svg)
+![Backend CI](https://github.com/Iris408/inventory-management-system/actions/workflows/backend-ci.yml/badge.svg)
+![Frontend CI](https://github.com/Iris408/inventory-management-system/actions/workflows/frontend-ci.yml/badge.svg)
 ![Docker CI](https://github.com/Iris408/inventory-management-system/actions/workflows/docker-ci.yml/badge.svg)
 
 # Inventory Management System / 在庫管理システム
 
-A full-stack inventory management system built with React, FastAPI, PostgreSQL, Docker, Docker Compose and JWT Authentication.
+Inventory Management System is a full-stack dashboard application built with React, TypeScript, Tailwind CSS, FastAPI, PostgreSQL, Docker, and GitHub Actions CI.
 
-The dashboard provides inventory tracking, analytics, product management, filtering, sorting, and stock monitoring through a responsive frontend interface connected to a REST API backend.
+The app allows users to manage inventory items, track stock levels, view inventory value, search/filter/sort products, and monitor low-stock or out-of-stock items through a refreshed admin-style dashboard UI.
 
-React、FastAPI、PostgreSQL、Docker、Docker Compose、およびJWT認証を使用して構築されたフルスタックの在庫管理システム。
-
-ダッシュボードは、レスポンシブなフロントエンドインターフェースとREST APIバックエンドを介して、リアルタイムの在庫追跡、分析、製品管理、フィルタリング、ソート、在庫監視機能を提供します。
+Inventory Management Systemは、React、TypeScript、Tailwind CSS、FastAPI、PostgreSQL、Docker、GitHub Actions CIを使用したフルスタック在庫管理ダッシュボードアプリです。
 
 ---
 
-### Screenshots
+## Live Demo / ライブデモ
 
-<table>
-  <tr>
-    <td>
-      <img src="./screenshots/dashboard.png" width="400"/>
-      <br/>
-      <strong>Dashboard Overview</strong>
-    </td>
-    <td>
-      <img src="./screenshots/dashboard_login.png" width="400"/>
-      <br/>
-      <strong>Login Page</strong>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <img src="./screenshots/new_item.png" width="400"/>
-      <br/>
-      <strong>Add New Item</strong>
-    </td>
-    <td>
-      <img src="./screenshots/edit_item.png" width="400"/>
-      <br/>
-      <strong>Edit Item</strong>
-    </td>
-  </tr>
-</table>
+Frontend:
+
+- [Inventory Dashboard](https://inventory-management-system-iris408.vercel.app/)
+
+Backend API:
+
+- [Backend Root Endpoint](https://inventory-management-system-1wcw.onrender.com/)
+- [Swagger API Docs](https://inventory-management-system-1wcw.onrender.com/docs)
 
 ---
 
-## Live Demo
+## Portfolio Status / ポートフォリオステータス
 
-Frontend Deployed on Vercel:
-[Inventory Frontend Dashboard](https://inventory-management-system-iris408.vercel.app/)
-
-Backend Deployed on Render:
-[Inventory Backend API Docs](https://inventory-management-system-1wcw.onrender.com/docs)
-
-## Current Status
-
-The frontend is deployed on Vercel and connected to a FastAPI backend deployed on Render with PostgreSQL database storage.
-
-The Inventory Management System is now deployed as a complete full-stack application. The React and TypeScript frontend is hosted on Vercel, while the FastAPI and PostgreSQL backend is hosted on Render.
-
-This update confirms live frontend/backend integration, deployed authentication, protected inventory routes and production CRUD functionality.
-
-### 日本語
-
-在庫管理システムは、完全なフルスタックアプリケーションとしてデプロイされました。ReactとTypeScriptで構築されたフロントエンドはVercelでホストされ、FastAPIとPostgreSQLで構成されたバックエンドはRenderでホストされています。
-
-今回のアップデートにより、フロントエンドとバックエンドの統合、認証機能、保護された在庫管理ルート、および本番環境でのCRUD機能が確認されました。
-
-### Completed
-- Item CRUD functionality
-- PostgreSQL database integration
-- FastAPI backend routes
-- React/TypeScript dashboard
-- Inventory filtering and sorting
-- Low-stock and stock status views
-- Analytics/statistics endpoints
-- Docker and Docker Compose setup
-- README and project documentation
-
-### Next Roadmap
-- Add JWT authentication
-- Protect inventory management routes
-- Add demo login users
-- Prepare deployment
-- Add backend and frontend CI/CD
-- Add screenshots and architecture notes
-- Improve mobile dashboard layout
-
-### Recent Deployment Fixes
-- Replaced hardcoded frontend API URL with `VITE_API_URL`
-- Normalised API URL handling to prevent double-slash endpoint errors
-- Configured Render backend environment variables
-- Updated CORS settings to allow Vercel frontend URL
-- Fixed Render backend database session dependency with `get_db`
-- Confirmed deployed FastAPI`/docs` route works
-- Fixed frontend login request format using `application/x-www-form-urlencoded`
-- Confirmed deployed frontend connects to deployed backend
-
----
-
-## Features
-
-| Backend | Frontend |
+| Area | Status |
 |---|---|
-| REST API CRUD operations | React + TypeScript inventory dashboard |
-| PostgreSQL database integration | Responsive Tailwind CSS UI |
-| SQLAlchemy ORM | Search and category filtering |
-| JWT Authentication | Sorting controls |
-| Protected inventory routes | Analytics cards |
-| Created/updated timestamps | Real-time API integration |
-| Docker and Docker Compose support | Add/Edit/Delete item functionality |
-| Render backend deployment | Loading and error handling |
-| RESTful API architecture | Vercel frontend deployment |
+| React / TypeScript frontend | ✅ Complete |
+| Admin-style dashboard refresh | ✅ Complete |
+| FastAPI backend | ✅ Complete |
+| PostgreSQL database | ✅ Connected |
+| Inventory CRUD | ✅ Working |
+| Search / filter / sort | ✅ Working |
+| Stock status tracking | ✅ Working |
+| Docker support | ✅ Complete |
+| GitHub Actions CI | ✅ Added |
+| Deployment | ✅ Live |
+| README portfolio polish | ✅ Complete |
 
 ---
 
-## Authentication Notes / 認証について
+## Features / 機能
 
-### English
-
-Inventory routes are protected and require a valid JWT token. 
-The frontend stores the token after login and sends it with protected requests using the `Authorization` header:
-```text
-Authorization: Bearer <token>
-```
-This allows authenticated users to securely load, add, edit, update and delete inventory items from the dashboard.
-
-### 日本語
-
-在庫管理ルートは保護されており、有効なJWTアクセストークンが必要です。
-ログイン後、フロントエンドはトークンを保存し、保護されたAPIリクエスト時に Authorization ヘッダーへ付与して送信します。
-```text
-Authorization: Bearer <トークン>
-```
-これにより、認証済みユーザーはデプロイ済みのフロントエンドダッシュボードから、在庫アイテムの取得、追加、編集、更新、削除を安全に実行できます。
+- Full-stack inventory dashboard
+- User login/authenticated dashboard access
+- Create inventory items
+- View inventory items
+- Edit inventory items
+- Delete inventory items
+- Search products by name
+- Filter products by category
+- Sort products by ID, price, or quantity
+- Track stock status:
+  - In Stock
+  - Low Stock
+  - Out of Stock
+- Dashboard summary cards:
+  - Total products
+  - Total quantity
+  - Inventory value
+  - In-stock items
+  - Low-stock items
+  - Out-of-stock items
+- Category summary panel
+- Recent items panel
+- Responsive admin dashboard layout
+- Dockerized backend/database setup
+- Swagger API documentation
 
 ---
 
-# Local Deployment /  ローカル開発
+## Tech Stack / 技術スタック
 
-## Docker Ports / Dockerポート
+### Frontend
 
-| Service | Local URL |
-| --- | --- |
-| Frontend | http://localhost:5173 |
-| Backend API | http://localhost:8000 |
-| Swagger UI | http://localhost:8000/docs |
-| PostgreSQL | localhost:5433 |
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Fetch API
+- Local storage token handling
 
-# Installation
-Clone repository /リポジトリのクローン
-
-```bash
-git clone https://github.com/Iris408/inventory-management-system.git
-cd inventory-management-system
-```
-
-## Environments Variables / 環境変数
 ### Backend
-Create an .env file inside the backend folder:
-```bash
-DATABASE_URL=postgresql://inventory_user:inventory_password@db:5432/inventory_db
-SECRET_KEY=your_secret_key_here
-CORS_ORIGINS=http://localhost:5173,http://localhost:5174
+
+- Python
+- FastAPI
+- PostgreSQL
+- SQLAlchemy
+- Uvicorn
+- JWT authentication
+- REST API
+
+### DevOps / Tooling
+
+- Docker
+- Docker Compose
+- GitHub Actions
+- Git / GitHub
+- Render
+- Vercel
+
+---
+
+## Architecture / アーキテクチャ
+
+```txt
+Frontend: React + TypeScript + Tailwind CSS
+        ↓
+FastAPI Backend
+        ↓
+PostgreSQL Database
 ```
 
 ### Frontend
-Create an .env file inside the frontend folder:
-```bash
-cd frontend
+
+The frontend provides an admin-style dashboard where users can manage inventory data visually.
+
+Main frontend responsibilities:
+
+- Display dashboard metrics
+- Handle login form state
+- Store authentication token in local storage
+- Send authenticated API requests
+- Render inventory table
+- Handle add/edit/delete UI
+- Apply search, filter, and sort controls
+- Display stock status badges
+
+### Backend
+
+The backend is built with FastAPI and exposes REST API endpoints for inventory management.
+
+Main backend responsibilities:
+
+- Handle authenticated API requests
+- Validate item data
+- Manage inventory CRUD operations
+- Query PostgreSQL through SQLAlchemy
+- Return stock status and item data to the frontend
+
+### Database
+
+PostgreSQL stores inventory item records including:
+
+- Item name
+- Category
+- Quantity
+- Price
+- Stock status
+- Created date
+- Updated date
+
+---
+
+## Dashboard Refresh / ダッシュボード更新
+
+The dashboard was refreshed from a basic CRUD table into a more polished admin-style interface.
+
+Updated UI features include:
+
+- Sidebar navigation
+- Top search bar
+- Dashboard header
+- Metric cards
+- Stock overview section
+- Category summary panel
+- Recent items panel
+- Cleaner inventory table
+- Improved empty states
+- Responsive layout
+
+This refresh was added to show stronger frontend and full-stack dashboard skills.
+
+---
+
+## API Endpoints / APIエンドポイント
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/auth/login` | Login and receive access token |
+| GET | `/items` | Get all inventory items |
+| POST | `/items` | Create a new inventory item |
+| GET | `/items/{id}` | Get one inventory item |
+| PUT | `/items/{id}` | Update an inventory item |
+| DELETE | `/items/{id}` | Delete an inventory item |
+| GET | `/docs` | Swagger API documentation |
+| GET | `/` | Backend root status check |
+
+Analytics endpoints:
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/items/low-stock` | Get low-stock items |
+| GET | `/items/summary/value` | Get inventory summary value |
+| GET | `/items/stats` | Get inventory stats |
+| GET | `/items/category-summary` | Get category summary |
+| GET | `/items/category-value` | Get category value |
+| GET | `/items/highest-value` | Get highest-value items |
+| GET | `/items/recent` | Get recent items |
+
+---
+
+## Environment Variables / 環境変数
+
+### Frontend
+
+Create a `.env` file inside the frontend folder:
+
+```env
 VITE_API_URL=http://localhost:8000
 ```
 
-## Run with Docker
-From the project root:
+For production, use the deployed backend URL:
+
+```env
+VITE_API_URL=https://inventory-management-system-1wcw.onrender.com
+```
+
+### Backend
+
+Create a `.env` file inside the backend folder:
+
+```env
+DATABASE_URL=
+SECRET_KEY=
+ALGORITHM=
+ACCESS_TOKEN_EXPIRE_MINUTES=
+```
+
+Never commit real `.env` files or production secrets to GitHub.
+
+---
+
+## Running Locally / ローカル実行
+
+This project uses separate frontend and backend folders.
+
+Example structure:
+
+```txt
+inventory-management-system/
+  backend/
+  frontend/
+```
+
+---
+
+## Backend Setup / バックエンドセットアップ
+
+Move into the backend folder:
+
+```bash
+cd backend
+```
+
+Install Python dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Run the FastAPI server:
+
+```bash
+uvicorn app.main:app --reload --port 8000
+```
+
+Open Swagger UI:
+
+```txt
+http://127.0.0.1:8000/docs
+```
+
+---
+
+## Frontend Setup / フロントエンドセットアップ
+
+Move into the frontend folder:
+
+```bash
+cd frontend
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the frontend locally:
+
+```bash
+npm run dev -- --host 0.0.0.0 --port 5174
+```
+
+Open the frontend:
+
+```txt
+http://localhost:5174
+```
+
+---
+
+## Docker Setup / Dockerセットアップ
+
+If using Docker Compose for the backend and PostgreSQL database:
+
 ```bash
 docker compose up --build
 ```
-If `docker compose` does not work, try:
-```bash
-docker-compose up --build
-```
-This starts the frontend, backend API and PostgreSQL database.
 
-## Run Locally / ローカル起動
-Open a new terminal:
-```bash
-cd frontend
-npm install
-npm run dev
-```
-Then open:
-`http://localhost:5173`
+If containers are already running and need to be restarted:
 
-## Usage / 使い方
-1. Start the backend and PostgreSQL database with Docker.
-2. Start the React frontend locally.
-3. Open the inventory dashboard in the browser.
-4. Register or log in to receive a JWT access token.
-5. Use the dashboard to create, edit, update, and delete inventory items.
-6. Use analytics cards, filtering, and sorting controls to manage inventory data.
+```bash
+docker compose down
+docker compose up --build
+```
+
+Backend API:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+Frontend:
+
+```text
+http://localhost:5174
+```
+
+---
+
+## Running Tests / テスト実行
+
+### Backend
+
+```bash
+pytest
+```
+
+or inside Docker:
+
+```bash
+docker compose exec api pytest
+```
+
+### Frontend
+
+Build check:
+
+```bash
+npm run build
+```
+
+This confirms the React/TypeScript frontend compiles successfully.
+
+---
+
+## Screenshots / スクリーンショット
+
+| Dashboard Overview | Add Item Form | Edit Item Form |
+|---|---|---|
+| ![Dashboard Overview](screenshots/01-dashboard-overview.png) | ![Add Item Form](screenshots/02-add-item-form.png) | ![Edit Item Form](screenshots/03-edit-item-form.png) |
+
+| Search / Filter / Sort | Mobile Dashboard | Swagger API Docs |
+|---|---|---|
+| ![Search Filter Sort](screenshots/04-search-filter-sort.png) | ![Mobile Dashboard](screenshots/05-mobile-dashboard.png) | ![Swagger API Docs](screenshots/06-api-docs.png) |
+
+---
+
+## Suggested Demo Flow / デモ手順
+
+1. Open the live frontend.
+2. Log in with the demo account:
+   - Username: `Admin`
+   - Password: `Password123`
+3. View the dashboard overview.
+4. Add a new inventory item.
+5. Edit an existing item.
+6. Search for an item by name.
+7. Filter items by category.
+8. Sort items by price or quantity.
+9. Delete a test item.
+10. Open Swagger API docs to view backend endpoints.
+
+---
+
+## Known Limitations / 現在の制限
+
+- Demo login/account setup may need manual backend configuration.
+- Free hosting services may sleep after inactivity.
+- Dashboard analytics are currently calculated from loaded inventory items.
+- Reports, suppliers, and settings sidebar links are visual placeholders for future expansion.
+- Test coverage can be expanded further.
+- Advanced role-based access control can be added later.
+- Production monitoring/logging can be improved.
+
+---
+
+## Future Improvements / 今後の改善
+
+### Frontend
+
+- Split `App.tsx` into smaller reusable components
+- Add dedicated pages for Reports, Suppliers, and Settings
+- Add charts for inventory value and stock trends
+- Add loading skeletons
+- Add toast notifications
+- Improve mobile navigation
+- Add dark mode
+
+### Backend
+
+- Add more analytics endpoints
+- Add pagination
+- Add stronger validation
+- Add role-based access control
+- Add refresh token support
+- Add structured logging
+
+### Testing / CI
+
+- Add backend endpoint tests
+- Add frontend component tests
+- Add CI build checks for both frontend and backend
+- Add Docker CI checks
+
+### Deployment
+
+- Improve production Docker configuration
+- Add uptime monitoring
+- Add clearer production environment variable setup
+
+---
+
+## Project Purpose / プロジェクトの目的
+
+This project was built to practise full-stack development skills using a realistic inventory management use case.
+
+It demonstrates:
+
+- Frontend dashboard development
+- Backend API design
+- PostgreSQL database integration
+- Authenticated API requests
+- CRUD operations
+- Search/filter/sort functionality
+- Docker-based development
+- Deployment and CI workflow practice
+
+このプロジェクトは、実際の在庫管理システムを想定して、フルスタック開発スキルを練習するために作成しました。
