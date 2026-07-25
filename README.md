@@ -16,6 +16,17 @@ The application supports authenticated inventory management, stock tracking, sea
 | Backend API | [Root Endpoint](https://inventory-management-system-1wcw.onrender.com/) |
 | Swagger Docs | [API Documentation](https://inventory-management-system-1wcw.onrender.com/docs) |
 
+### Demo Login
+
+Use the following demo account to explore the deployed dashboard:
+
+| Field | Credential |
+| --- | --- |
+| Username | `demo_recruiter` |
+| Password | `InventoryDemo2026!` |
+
+> This account uses sample inventory data and is provided for demonstration purposes only.
+
 ## Current Status
 
 | Area | Status |

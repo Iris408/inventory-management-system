@@ -29,6 +29,8 @@ const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:8000").replac
 )
 
 const LOGIN_URL = `${API_URL}/auth/login`
+const DEMO_USERNAME = "demo_recruiter"
+const DEMO_PASSWORD = "InventoryDemo2026!"
 
 function App() {
   const [initialLoad, setInitialLoad] = useState(true)
@@ -57,6 +59,15 @@ function App() {
     username: "",
     password: "",
   })
+
+  function fillDemoCredentials() {
+    setLoginError(null)
+
+    setLoginForm({
+      username: DEMO_USERNAME,
+      password: DEMO_PASSWORD,
+    })
+  }
 
   const [loginError, setLoginError] = useState<string | null>(null)
 
@@ -332,7 +343,49 @@ function App() {
             </div>
           )}
 
-          <div className="space-y-4">
+          <div className="mb-5 rounded-xl border border-blue-200 bg-blue-50 p-4">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-sm font-semibold text-blue-900">
+                  Portfolio demo
+                </p>
+
+                <p className="mt-1 text-xs leading-5 text-blue-700">
+                  Use the recruiter demo account to explore the inventory dashboard.
+                </p>
+              </div>
+
+              <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-700">
+                Demo
+              </span>
+            </div>
+
+            <div className="mt-3 space-y-1 text-xs text-blue-800">
+              <p>
+                Username: <code className="font-semibold">{DEMO_USERNAME}</code>
+              </p>
+
+              <p>
+                Password: <code className="font-semibold">{DEMO_PASSWORD}</code>
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={fillDemoCredentials}
+              className="mt-4 w-full rounded-lg border border-blue-300 bg-white px-3 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100"
+            >
+              Use demo credentials
+            </button>
+          </div>
+
+          <form
+            className="space-y-4"
+            onSubmit={(event) => {
+              event.preventDefault()
+              login()
+            }}
+          >
             <input
               className="border border-slate-300 rounded-xl px-4 py-3 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Username"
@@ -353,12 +406,12 @@ function App() {
             />
 
             <button
-              onClick={login}
-              className="bg-blue-600 text-white px-4 py-3 rounded-xl hover:bg-blue-700 transition w-full font-semibold"
+              type="submit"
+              className="w-full rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-700"
             >
               Login
             </button>
-          </div>
+          </form>
         </div>
       </div>
     )
