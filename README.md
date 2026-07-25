@@ -4,20 +4,17 @@
 
 # Inventory Management System
 
-A full-stack inventory dashboard built with React, TypeScript, Tailwind CSS, FastAPI, PostgreSQL, Docker, and GitHub Actions CI.
+A production-style full-stack inventory dashboard built with React, TypeScript, Tailwind CSS, FastAPI, PostgreSQL, Docker, and GitHub Actions.
 
-The app allows users to manage inventory items, track stock levels, view inventory value, search/filter/sort products, and monitor low-stock or out-of-stock items through an admin-style dashboard UI.
+The application supports authenticated inventory management, stock tracking, search, filtering, sorting, analytics, and low-stock monitoring through a responsive admin dashboard.
 
 ## Live Demo
 
-Frontend:
-
-- [Inventory Dashboard](https://inventory-management-system-iris408.vercel.app/)
-
-Backend API:
-
-- [Backend Root Endpoint](https://inventory-management-system-1wcw.onrender.com/)
-- [Swagger API Docs](https://inventory-management-system-1wcw.onrender.com/docs)
+| Service | Link |
+| --- | --- |
+| Frontend | [Inventory Dashboard](https://inventory-management-system-iris408.vercel.app/) |
+| Backend API | [Root Endpoint](https://inventory-management-system-1wcw.onrender.com/) |
+| Swagger Docs | [API Documentation](https://inventory-management-system-1wcw.onrender.com/docs) |
 
 ## Current Status
 
@@ -34,6 +31,8 @@ Backend API:
 | GitHub Actions CI | ✅ Complete |
 | Deployment | ✅ Live |
 
+The core full-stack application is complete and deployed. Future development will focus on reporting, supplier management, role-based access, testing, and production infrastructure.
+
 ## Features
 
 - Full-stack inventory dashboard
@@ -45,39 +44,23 @@ Backend API:
 - Track stock status: in stock, low stock, and out of stock
 - Dashboard summary cards for product count, quantity, stock status, and inventory value
 - Category summary and recent items panels
-- Responsive admin dashboard layout
+- Inventory value analytics
+- Category-level quantity and value summaries
+- Highest-value and lowest-stock item insights
+- Recent inventory item tracking
+- Pagination for larger inventory datasets
 - Swagger API documentation
 - Backend, frontend, and Docker CI workflows
 
 ## Tech Stack
 
-### Frontend
+## Tech Stack
 
-- React
-- TypeScript
-- Vite
-- Tailwind CSS
-- Fetch API
-- Local storage token handling
-
-### Backend
-
-- Python
-- FastAPI
-- PostgreSQL
-- SQLAlchemy
-- Uvicorn
-- JWT authentication
-- REST API
-
-### DevOps / Tooling
-
-- Docker
-- Docker Compose
-- GitHub Actions
-- Git / GitHub
-- Render
-- Vercel
+| Area | Technologies |
+| --- | --- |
+| Frontend | React, TypeScript, Vite, Tailwind CSS, Fetch API, Local storage token handling |
+| Backend | Python, FastAPI, PostgreSQL, SQLAlchemy, Uvicorn, JWT authentication, REST API |
+| DevOps / Tooling | Docker, Docker Compose, GitHub Actions, Git, GitHub, Render, Vercel |
 
 ## Screenshots
 
@@ -116,6 +99,40 @@ Frontend:
 http://localhost:5174
 ```
 
+## Roadmap
+
+- Add supplier management
+- Add inventory reporting and export
+- Expand role-based access control
+- Add automated frontend and API tests
+- Add multi-currency support
+- Add localisation support
+- Deploy production infrastructure on AWS
+
+## Project Structure
+
+```text
+inventory-management-system/
+├── backend/
+│   ├── app/
+│   ├── main.py
+│   ├── tests/
+│   ├── Dockerfile
+│   └── requirements.txt
+├── frontend/
+│   ├── src/
+│   ├── Dockerfile
+│   └── package.json
+├── docs/
+│   ├── api-reference.md
+│   ├── project-details.md
+│   └── setup.md
+├── screenshots/
+├── docker-compose.yml
+├── LICENSE
+└── README.md
+```
+
 ## Documentation
 
 More detailed project documentation is available in the `docs/` folder.
@@ -126,9 +143,16 @@ More detailed project documentation is available in the `docs/` folder.
 | [API Reference](./docs/api-reference.md) | Authentication, inventory, and analytics endpoints |
 | [Project Details](./docs/project-details.md) | Architecture, dashboard refresh notes, limitations, future improvements, and learning notes |
 
-## Project Summary
+## CI/CD
 
-Inventory Management System is a full-stack dashboard project built to practise realistic CRUD workflows, authenticated API requests, PostgreSQL integration, dashboard UI design, Docker-based development, deployment, and CI/CD workflow checks.
+GitHub Actions validates the project on every push and pull request.
+
+Current workflows include:
+
+- Backend dependency installation and Python validation
+- Backend test execution
+- Frontend dependency installation and production build
+- Docker image build validation
 
 ## Author
 
