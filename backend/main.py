@@ -8,7 +8,7 @@ from app.models.item_model import Item
 from app.models.user_model import User
 from app.routes.item_routes import router as item_router
 from app.routes.auth_routes import router as auth_router
-
+from app.routes import reports
 
 app = FastAPI()
 
@@ -44,10 +44,11 @@ def create_database_tables():
 @app.get("/")
 def home():
     return {
-        "message": "Inventory Management System API",
+        "message": "Automotive Inventory Management System API",
         "status": "ok"
     }
 
 
 app.include_router(item_router)
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])
+app.include_router(reports.router)

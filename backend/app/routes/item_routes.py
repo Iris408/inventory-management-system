@@ -123,29 +123,46 @@ def get_inventory_stats(
 ):
     items = db.query(Item).all()
 
-    total_items = len(items)
+    total_products = len(items)
     total_quantity = 0
-    total_value = 0
+    total_inventory_value = 0
+
+    in_stock_count = 0
     low_stock_count = 0
+    out_of_stock_count = 0
 
     for item in items:
         total_quantity += item.quantity
-        total_value += item.quantity * item.price
+        total_inventory_value += item.quantity * item.price
 
-        if item.quantity <= 5:
+        if item.quantity == 0:
+            out_of_stock_count += 1
+        elif item.quantity <= 5:
             low_stock_count += 1
+        else:
+            in_stock_count += 1    
 
-    average_price = 0
+    average_item_price = 0
 
     if total_quantity > 0:
-        average_price = total_value / total_quantity
+        average_item_price = (
+            total_inventory_value / total_quantity
+        )    
 
     return {
-        "total_products": total_items,
+        "total_products": total_products,
         "total_quantity": total_quantity,
-        "total_inventory_value": total_value,
-        "average_item_price": round(average_price, 2),
-        "low_stock_count": low_stock_count
+        "total_inventory_value": round(
+            total_inventory_value,
+            2
+        ),
+        "average_item_price": round(
+            average_item_price, 
+            2
+        ),
+        "in_stock_count": in_stock_count,
+        "low_stock_count": low_stock_count,
+        "out_of_stock_count": out_of_stock_count
     }
 
 

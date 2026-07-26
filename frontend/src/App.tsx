@@ -23,6 +23,22 @@ type LoginForm = {
   password: string
 }
 
+type InventoryStats = {
+  total_products: number
+  total_quantity: number
+  total_inventory_value: number
+  average_item_price: number
+  in_stock_count: number
+  low_stock_count: number
+  out_of_stock_count: number
+}
+
+type CategorySummaryItem = {
+  category: string
+  quantity: number
+  value: number
+}
+
 const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:8000").replace(
   /\/+$/,
   ""
@@ -50,6 +66,12 @@ function App() {
     quantity: 0,
     price: 0,
   })
+
+  const [inventoryStats, setInventoryStats] =
+  useState<InventoryStats | null>(null)
+
+  const [categorySummary, setCategorySummary] =
+  useState<CategorySummaryItem[]>([])
 
   const [token, setToken] = useState<string | null>(() =>
     localStorage.getItem("inventory_token")
@@ -174,6 +196,76 @@ function App() {
     }
   }
 
+  async function fetchInventoryStats() {
+    try {
+      if (!token) {
+        return
+      }
+
+      const response = await fetch(`${API_URL}/items/stats`, {
+        headers: getAuthHeaders(),
+      })
+
+      if (response.status === 401) {
+        await logout()
+        throw new Error("Unauthorized. Please log in again.")
+      }
+
+      if (!response.ok) {
+        throw new Error("Failed to load inventory statistics")
+      }
+
+      const data: InventoryStats = await response.json()
+      setInventoryStats(data)
+    } catch {
+      setError("Could not load inventory statistics.")
+    }
+  }
+
+  async function fetchCategorySummary() {
+    try {
+      if (!token) {
+        return
+      }
+
+      const [summaryResponse, valueResponse] = await Promise.all([
+        fetch(`${API_URL}/items/category-summary`, {
+          headers: getAuthHeaders(),
+        }),
+        fetch(`${API_URL}/items/category-value`, {
+          headers: getAuthHeaders(),
+        }),
+      ])
+
+      if (summaryResponse.status === 401 || valueResponse.status === 401) {
+        await logout()
+        throw new Error("Unauthorized. Please log in again.")
+      }
+      if (summaryResponse.ok || !valueResponse.ok) {
+        throw new Error("Failed to load category summary")
+      }
+
+      const quantityData: Record<string, number> =
+        await summaryResponse.json()
+      
+      const valueData: Record<string, string> =
+        await valueResponse.json()
+
+      const summary: CategorySummaryItem[] = Object.keys(quantityData).map(
+        (categoryName) => ({
+          category: categoryName,
+          quantity: quantityData[categoryName],
+          value: Number(valueData[categoryName] ?? 0),
+        })
+      )
+      
+      setCategorySummary(summary)
+      setCategories(Object.keys(quantityData))
+    } catch {
+      setError("Could not load category summary.")
+    }
+  }
+
   async function addItem() {
     try {
       setError(null)
@@ -205,7 +297,11 @@ function App() {
       })
 
       setShowForm(false)
-      await fetchItems()
+      await Promise.all([
+        fetchItems(),
+        fetchInventoryStats(),
+        fetchCategorySummary(),
+      ])  
     } catch {
       setError("Could not add item.")
     }
@@ -237,7 +333,11 @@ function App() {
       }
 
       setEditItem(null)
-      await fetchItems()
+      await Promise.all([
+        fetchItems(),
+        fetchInventoryStats(),
+        fetchCategorySummary(),
+      ])  
     } catch {
       setError("Could not update item.")
     }
@@ -254,7 +354,11 @@ function App() {
         throw new Error("Failed to delete item")
       }
 
-      await fetchItems()
+      await Promise.all([
+        fetchItems(),
+        fetchInventoryStats(),
+        fetchCategorySummary(),
+      ])  
     } catch {
       setError("Could not delete item.")
     }
@@ -268,35 +372,26 @@ function App() {
     }
   }, [token, search, category, sortBy, order])
 
+  useEffect(() => {
+    if (token) {
+      fetchInventoryStats()
+      fetchCategorySummary()
+    }
+  }, [token])    
+
+
   function getStatusStyle(status: string) {
     if (status === "In Stock") return "bg-green-100 text-green-800"
     if (status === "Low Stock") return "bg-yellow-100 text-yellow-800"
     return "bg-red-100 text-red-800"
   }
 
-  const totalProducts = items.length
-
-  const totalQuantity = items.reduce(
-    (total, item) => total + item.quantity,
-    0
-  )
-
-  const inventoryValue = items.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  )
-
-  const inStockItems = items.filter(
-    (item) => item.stock_status === "In Stock"
-  )
-
-  const lowStockItems = items.filter(
-    (item) => item.stock_status === "Low Stock"
-  )
-
-  const outOfStockItems = items.filter(
-    (item) => item.stock_status === "Out of Stock"
-  )
+  const totalProducts = inventoryStats?.total_products ?? 0
+  const totalQuantity = inventoryStats?.total_quantity ?? 0
+  const inventoryValue = inventoryStats?.total_inventory_value ?? 0
+  const inStockCount = inventoryStats?.in_stock_count ?? 0
+  const lowStockCount = inventoryStats?.low_stock_count ?? 0
+  const outOfStockCount = inventoryStats?.out_of_stock_count ?? 0
 
   const recentItems = [...items]
     .sort(
@@ -305,19 +400,6 @@ function App() {
         new Date(a.created_at).getTime()
     )
     .slice(0, 4)
-
-  const categorySummary = categories.map((cat) => {
-    const categoryItems = items.filter((item) => item.category === cat)
-
-    return {
-      category: cat,
-      count: categoryItems.length,
-      value: categoryItems.reduce(
-        (total, item) => total + item.price * item.quantity,
-        0
-      ),
-    }
-  })
 
   if (!token) {
     return (
@@ -329,11 +411,11 @@ function App() {
             </div>
 
             <h1 className="text-2xl font-bold text-slate-900">
-              Inventory Dashboard
+              Parts Dashboard
             </h1>
 
             <p className="text-sm text-slate-500 mt-2">
-              Log in to manage products, stock levels, and inventory value.
+              Log in to manage vehicle parts, stock levels, and overall inventory value.
             </p>
           </div>
 
@@ -351,7 +433,7 @@ function App() {
                 </p>
 
                 <p className="mt-1 text-xs leading-5 text-blue-700">
-                  Use the recruiter demo account to explore the inventory dashboard.
+                  Use the recruiter demo account to explore the parts inventory dashboard.
                 </p>
               </div>
 
@@ -420,7 +502,7 @@ function App() {
   if (initialLoad) {
     return (
       <div className="flex items-center justify-center h-screen bg-slate-100">
-        <p className="text-slate-500 text-lg">Loading inventory...</p>
+        <p className="text-slate-500 text-lg">Loading ...</p>
       </div>
     )
   }
@@ -435,8 +517,8 @@ function App() {
           </div>
 
           <div>
-            <p className="font-bold text-slate-900">Inventory</p>
-            <p className="text-xs text-slate-500">Management System</p>
+            <p className="font-bold text-slate-900">Parts</p>
+            <p className="text-xs text-slate-500">Inventory Management</p>
           </div>
         </div>
 
@@ -446,11 +528,11 @@ function App() {
           </button>
 
           <button className="w-full text-left px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50">
-            Inventory
+            Parts Inventory
           </button>
 
           <button className="w-full text-left px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50">
-            Reports
+            Internal Reports
           </button>
 
           <button className="w-full text-left px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50">
@@ -490,20 +572,13 @@ function App() {
             >
               {showForm ? "Cancel" : "+ Add Item"}
             </button>
-
-            <button
-              onClick={logout}
-              className="bg-slate-100 text-slate-700 px-4 py-3 rounded-xl hover:bg-slate-200 transition text-sm font-semibold"
-            >
-              Logout
-            </button>
           </div>
         </div>
 
         {/* Header */}
         <section className="mb-6">
           <p className="text-sm font-semibold text-blue-600 mb-1">
-            Inventory Management
+            Parts Inventory Management
           </p>
 
           <h1 className="text-3xl font-bold text-slate-900">
@@ -691,7 +766,7 @@ function App() {
           </div>
 
           <div className="bg-white border border-slate-200 rounded-2xl p-5">
-            <p className="text-sm text-slate-500">Inventory Value</p>
+            <p className="text-sm text-slate-500">Total Inventory Value</p>
             <h2 className="text-3xl font-bold text-slate-900 mt-2">
               £{inventoryValue.toFixed(2)}
             </h2>
@@ -703,7 +778,7 @@ function App() {
           <div className="bg-white border border-slate-200 rounded-2xl p-5">
             <p className="text-sm text-slate-500">In Stock Items</p>
             <h2 className="text-3xl font-bold text-green-600 mt-2">
-              {inStockItems.length}
+              {inStockCount}
             </h2>
             <p className="text-xs text-slate-400 mt-2">
               Healthy stock levels
@@ -713,7 +788,7 @@ function App() {
           <div className="bg-white border border-slate-200 rounded-2xl p-5">
             <p className="text-sm text-slate-500">Low Stock Items</p>
             <h2 className="text-3xl font-bold text-amber-500 mt-2">
-              {lowStockItems.length}
+              {lowStockCount}
             </h2>
             <p className="text-xs text-slate-400 mt-2">
               Needs attention soon
@@ -723,7 +798,7 @@ function App() {
           <div className="bg-white border border-slate-200 rounded-2xl p-5">
             <p className="text-sm text-slate-500">Out of Stock Items</p>
             <h2 className="text-3xl font-bold text-red-500 mt-2">
-              {outOfStockItems.length}
+              {outOfStockCount}
             </h2>
             <p className="text-xs text-slate-400 mt-2">
               Requires restocking
@@ -737,7 +812,7 @@ function App() {
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-bold text-slate-900">Stock Overview</h2>
               <span className="text-xs text-slate-400">
-                Live inventory summary
+                All inventory items
               </span>
             </div>
 
@@ -745,59 +820,90 @@ function App() {
               <div className="rounded-xl bg-green-50 p-4">
                 <p className="text-xs text-green-700">In Stock</p>
                 <p className="text-2xl font-bold text-green-700">
-                  {inStockItems.length}
+                  {inStockCount}
                 </p>
               </div>
 
               <div className="rounded-xl bg-amber-50 p-4">
                 <p className="text-xs text-amber-700">Low Stock</p>
                 <p className="text-2xl font-bold text-amber-700">
-                  {lowStockItems.length}
+                  {lowStockCount}
                 </p>
               </div>
 
               <div className="rounded-xl bg-red-50 p-4">
                 <p className="text-xs text-red-700">Out of Stock</p>
                 <p className="text-2xl font-bold text-red-700">
-                  {outOfStockItems.length}
+                  {outOfStockCount}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white border border-slate-200 rounded-2xl p-6">
-            <h2 className="font-bold text-slate-900 mb-5">
-              Category Summary
-            </h2>
+          <div className="rounded-2xl border border-slate-200 bg-white p-5">
+            <div className="mb-5">
+              <h2 className="font-semibold text-slate-800 ">
+                Inventory Value by Category
+              </h2>
 
-            <div className="space-y-3">
+              <p className="text-sm text-slate-400">
+                Full inventory value across all categories
+              </p>
+            </div>  
+
+            <div className="space-y-4">
               {categorySummary.length === 0 ? (
                 <p className="text-sm text-slate-400">
-                  No categories available yet.
+                  No category data available.
                 </p>
               ) : (
-                categorySummary.slice(0, 5).map((cat) => (
-                  <div
-                    key={cat.category}
-                    className="flex items-center justify-between text-sm"
-                  >
-                    <div>
-                      <p className="font-medium text-slate-700">
-                        {cat.category}
-                      </p>
-                      <p className="text-xs text-slate-400">
-                        {cat.count} item{cat.count === 1 ? "" : "s"}
-                      </p>
-                    </div>
+                [...categorySummary]
+                  .sort((a, b) => b.value - a.value)
+                  .slice(0, 8)
+                  .map((cat) => {
+                    const highestCategoryValue = Math.max(
+                      ...categorySummary.map((item) => item.value)
+                    )
 
-                    <p className="font-semibold text-slate-800">
-                      £{cat.value.toFixed(2)}
-                    </p>
-                  </div>
-                ))
+                    const barWidth =
+                      highestCategoryValue > 0
+                        ? (cat.value / highestCategoryValue) * 100
+                        : 0
+                    
+                    return (
+                      <div key={cat.category}>
+                        <div className="mb-1 flex items-center justify-between gap-4">
+                          <p className="truncate text-sm font-medium text-slate-700">
+                            {cat.category}
+                          </p>
+                      
+                          <p className="shrink-0 text-sm font-semibold text-slate-400">
+                            {cat.value.toLocaleString("en-GB", {
+                              style: "currency",
+                              currency: "GBP",
+                            })}
+                          </p>
+                        </div>
+
+                        <div className="h-3 overflow-hidden rounded-full bg-slate-100">
+                          <div
+                            className="h-full rounded-full bg-blue-600 transition-all duration-500"
+                            style={{
+                              width: `${barWidth}%`,
+                            }}
+                          />
+                        </div>
+
+                        <p className="mt-1 text-xs text-slate-400">
+                          {cat.quantity} unit
+                          {cat.quantity === 1 ? "" : "s"}
+                        </p>
+                      </div>
+                    )
+                  })
               )}
             </div>
-          </div>
+          </div>          
         </section>
 
         {/* Controls */}
@@ -860,7 +966,7 @@ function App() {
         <section className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
           <div className="px-6 py-5 border-b border-slate-200 flex items-center justify-between">
             <div>
-              <h2 className="font-bold text-slate-900">Inventory Items</h2>
+              <h2 className="font-bold text-slate-900">Recent Inventory (10 most recent items)</h2>
               <p className="text-sm text-slate-500">
                 Manage products, quantities, prices, and stock status.
               </p>
@@ -888,7 +994,7 @@ function App() {
                   <tr>
                     <td colSpan={9} className="px-6 py-12 text-center">
                       <p className="font-semibold text-slate-600">
-                        No inventory items found
+                        No parts found
                       </p>
 
                       <p className="text-sm text-slate-400 mt-1">
