@@ -1,6 +1,6 @@
 # API Reference
 
-This document lists the main API endpoints used by the Inventory Management System.
+This document lists the main API endpoints used by the Inventory Analytics Platform - PartsPilot.
 
 ## Authentication
 

@@ -10,14 +10,24 @@ from app.routes.item_routes import router as item_router
 from app.routes.auth_routes import router as auth_router
 from app.routes import reports
 
-app = FastAPI()
+app = FastAPI(
+    title="PartsPilot API",
+    description=(
+        "Backend API for inventory management, operational analytics "
+        "and business intelligence reporting."
+    ),
+    version="2.0.0",
+)
 
 
 cors_origins = os.getenv(
     "CORS_ORIGINS",
-    "http://localhost:5174,"
-    "http://127.0.0.1:5174,"
-    "https://inventory-management-system-iris408.vercel.app"
+    (
+        "http://localhost:5173,"
+        "http://localhost:5174,"
+        "http://127.0.0.1:5174,"
+        "https://inventory-management-system-iris408.vercel.app"
+    ),
 )
 
 origins = [
@@ -44,10 +54,13 @@ def create_database_tables():
 @app.get("/")
 def home():
     return {
-        "message": "Automotive Inventory Management System API",
+        "message": "PartsPilot API",
         "status": "ok"
     }
 
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
 
 app.include_router(item_router)
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])
