@@ -39,14 +39,14 @@ type CategorySummaryItem = {
   value: number
 }
 
-const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:8000").replace(
+const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:8001").replace(
   /\/+$/,
   ""
 )
 
 const LOGIN_URL = `${API_URL}/auth/login`
-const DEMO_USERNAME = "demo_recruiter"
-const DEMO_PASSWORD = "InventoryDemo2026!"
+const DEMO_USERNAME = "partspilot"
+const DEMO_PASSWORD = "PartsPilotDemo2026!"
 
 function App() {
   const [initialLoad, setInitialLoad] = useState(true)
@@ -74,7 +74,7 @@ function App() {
   useState<CategorySummaryItem[]>([])
 
   const [token, setToken] = useState<string | null>(() =>
-    localStorage.getItem("inventory_token")
+    localStorage.getItem("TOKEN_STORAGE_KEY")
   )
 
   const [loginForm, setLoginForm] = useState<LoginForm>({
@@ -110,19 +110,18 @@ function App() {
       })
 
       if (!response.ok) {
-        const errorText = await response.text()
-        console.error("Login Failed:", response.status, errorText)
         throw new Error("Login failed")
       }
 
       const data = await response.json()
+
       const accessToken = data.access_token || data.token
 
       if (!accessToken) {
         throw new Error("No token returned")
       }
 
-      localStorage.setItem("inventory_token", accessToken)
+      localStorage.setItem("TOKEN_STORAGE_KEY", accessToken)
       setToken(accessToken)
 
       setLoginForm({
@@ -135,20 +134,22 @@ function App() {
   }
 
   async function logout() {
-    localStorage.removeItem("inventory_token")
+    localStorage.removeItem("TOKEN_STORAGE_KEY")
     setToken(null)
     setItems([])
   }
 
-  function getAuthHeaders() {
-    if (!token) {
-      throw new Error("No authentication token found")
+  function getAuthHeaders(): HeadersInit {
+    const storedToken = localStorage.getItem("TOKEN_STORAGE_KEY");
+
+    if (!storedToken) {
+      throw new Error("Authentication token is missing");
     }
 
     return {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    }
+      Authorization: `Bearer ${storedToken}`,
+    };
   }
 
   async function fetchItems() {
@@ -228,40 +229,49 @@ function App() {
         return
       }
 
+      const headers = getAuthHeaders()
+
       const [summaryResponse, valueResponse] = await Promise.all([
         fetch(`${API_URL}/items/category-summary`, {
-          headers: getAuthHeaders(),
+          headers,
         }),
         fetch(`${API_URL}/items/category-value`, {
-          headers: getAuthHeaders(),
+          headers,
         }),
       ])
 
-      if (summaryResponse.status === 401 || valueResponse.status === 401) {
+      if (
+        summaryResponse.status === 401 ||
+        valueResponse.status === 401
+      ) {
         await logout()
         throw new Error("Unauthorized. Please log in again.")
       }
-      if (summaryResponse.ok || !valueResponse.ok) {
-        throw new Error("Failed to load category summary")
+
+      if (!summaryResponse.ok || !valueResponse.ok) {
+        throw new Error(
+          `Failed to load category summary: ` +
+          `${summaryResponse.status}/${valueResponse.status}`
+        )
       }
 
       const quantityData: Record<string, number> =
         await summaryResponse.json()
-      
+
       const valueData: Record<string, string> =
         await valueResponse.json()
 
-      const summary: CategorySummaryItem[] = Object.keys(quantityData).map(
-        (categoryName) => ({
+      const summary: CategorySummaryItem[] =
+        Object.keys(quantityData).map((categoryName) => ({
           category: categoryName,
           quantity: quantityData[categoryName],
           value: Number(valueData[categoryName] ?? 0),
-        })
-      )
-      
+        }))
+
       setCategorySummary(summary)
       setCategories(Object.keys(quantityData))
-    } catch {
+    } catch (error) {
+      console.error("Category summary error:", error)
       setError("Could not load category summary.")
     }
   }
@@ -403,42 +413,41 @@ function App() {
 
   if (!token) {
     return (
-      <div className="min-h-screen bg-slate-100 flex items-center justify-center p-8">
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 w-full max-w-md">
+      <div className="min-h-screen bg-gradient-to-b from-[#3B3F4A] to-[#74625D] flex items-center justify-center p-8">
+        <div className="bg-transparent border border-slate-400 shadow-sm p-8 w-full max-w-md">
           <div className="text-center mb-6">
-            <div className="mx-auto h-12 w-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-bold mb-4">
-              IMS
+            <div className="text-6xl text-white">
+              𓎚
+            </div>  
+            <div className="mx-auto h-12 w-full text-slate-900/80 flex items-center justify-center text-5xl underline font-bold mb-4">
+              PartsPilot
             </div>
 
-            <h1 className="text-2xl font-bold text-slate-900">
-              Parts Dashboard
+            <h1 className="text-sm text-slate-200 mt-2 font-semibold">
+              Manage vehicle parts, monitor stock levels, track inventory value, and gain operational insights.
             </h1>
-
-            <p className="text-sm text-slate-500 mt-2">
-              Log in to manage vehicle parts, stock levels, and overall inventory value.
-            </p>
           </div>
 
           {loginError && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-4">
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 mb-4">
               {loginError}
             </div>
           )}
 
-          <div className="mb-5 rounded-xl border border-blue-200 bg-blue-50 p-4">
+          <div className="mb-5 border border-blue-200 bg-blue-50 p-4">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold text-blue-900">
-                  Portfolio demo
+                  Demo Account
                 </p>
 
                 <p className="mt-1 text-xs leading-5 text-blue-700">
-                  Use the recruiter demo account to explore the parts inventory dashboard.
+                  Use the demo account below to explore PartsPilot dashboard.
                 </p>
               </div>
 
-              <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-700">
-                Demo
+              <span className="bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-700">
+                Free
               </span>
             </div>
 
@@ -455,7 +464,7 @@ function App() {
             <button
               type="button"
               onClick={fillDemoCredentials}
-              className="mt-4 w-full rounded-lg border border-blue-300 bg-white px-3 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100"
+              className="mt-4 w-full border border-blue-300 bg-white px-3 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100"
             >
               Use demo credentials
             </button>
@@ -469,7 +478,7 @@ function App() {
             }}
           >
             <input
-              className="border border-slate-300 rounded-xl px-4 py-3 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="border border-slate-300 rounded-xl bg-blue-50 text-blue-900 px-4 py-3 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Username"
               value={loginForm.username}
               onChange={(e) =>
@@ -478,7 +487,7 @@ function App() {
             />
 
             <input
-              className="border border-slate-300 rounded-xl px-4 py-3 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="border border-slate-300 rounded-xl bg-blue-50 text-blue-900 px-4 py-3 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Password"
               type="password"
               value={loginForm.password}
@@ -489,7 +498,7 @@ function App() {
 
             <button
               type="submit"
-              className="w-full rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-700"
+              className="w-full rounded-xl bg-blue-300/40 px-4 py-3 font-semibold text-white transition hover:bg-blue-700/30"
             >
               Login
             </button>
@@ -513,12 +522,12 @@ function App() {
       <aside className="hidden lg:flex w-64 bg-white border-r border-slate-200 min-h-screen flex-col px-5 py-6">
         <div className="flex items-center gap-3 mb-10">
           <div className="h-10 w-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-bold">
-            IMS
+            PP
           </div>
 
           <div>
-            <p className="font-bold text-slate-900">Parts</p>
-            <p className="text-xs text-slate-500">Inventory Management</p>
+            <p className="font-bold text-slate-900">PartsPilot</p>
+            <p className="text-xs text-slate-500">Inventory Analytics Platform</p>
           </div>
         </div>
 
@@ -578,11 +587,11 @@ function App() {
         {/* Header */}
         <section className="mb-6">
           <p className="text-sm font-semibold text-blue-600 mb-1">
-            Parts Inventory Management
+            PartsPilot Dashboard
           </p>
 
           <h1 className="text-3xl font-bold text-slate-900">
-            Dashboard
+            Inventory Analytics Platform
           </h1>
 
           <p className="text-slate-500 mt-2 max-w-2xl">
@@ -761,7 +770,7 @@ function App() {
               {totalQuantity}
             </h2>
             <p className="text-xs text-slate-400 mt-2">
-              Units available across inventory
+              Units available across all inventory items
             </p>
           </div>
 
@@ -810,7 +819,7 @@ function App() {
         <section className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-6">
           <div className="xl:col-span-2 bg-white border border-slate-200 rounded-2xl p-6">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="font-bold text-slate-900">Stock Overview</h2>
+              <h2 className="font-bold text-slate-900">Complete Stock Overview</h2>
               <span className="text-xs text-slate-400">
                 All inventory items
               </span>
