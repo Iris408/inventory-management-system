@@ -1,6 +1,6 @@
 # Project Details
 
-This document contains additional technical notes for the Inventory Management System.
+This document contains additional technical notes for the Inventory Analytics Platform - PartsPilot.
 
 ## Architecture
 

@@ -1,20 +1,20 @@
-![Backend CI](https://github.com/Iris408/inventory-management-system/actions/workflows/backend-ci.yml/badge.svg)
-![Frontend CI](https://github.com/Iris408/inventory-management-system/actions/workflows/frontend-ci.yml/badge.svg)
-![Docker CI](https://github.com/Iris408/inventory-management-system/actions/workflows/docker-ci.yml/badge.svg)
+![Backend CI](https://github.com/Iris408/partspilot/actions/workflows/backend-ci.yml/badge.svg)
+![Frontend CI](https://github.com/Iris408/partspilot/actions/workflows/frontend-ci.yml/badge.svg)
+![Docker CI](https://github.com/Iris408/partspilot/actions/workflows/docker-ci.yml/badge.svg)
 
-# Inventory Management System
+# PartsPilot
 
-A production-style full-stack inventory dashboard built with React, TypeScript, Tailwind CSS, FastAPI, PostgreSQL, Docker, and GitHub Actions.
-
-The application supports authenticated inventory management, stock tracking, search, filtering, sorting, analytics, and low-stock monitoring through a responsive admin dashboard.
+A production-style inventory analytics platform built with FastAPI, PostgreSQL, React, Docker and Power BI.
 
 ## Live Demo
 
 | Service | Link |
 | --- | --- |
-| Frontend | [Inventory Dashboard](https://inventory-management-system-iris408.vercel.app/) |
-| Backend API | [Root Endpoint](https://inventory-management-system-1wcw.onrender.com/) |
-| Swagger Docs | [API Documentation](https://inventory-management-system-1wcw.onrender.com/docs) |
+| Frontend | [PartsPilot Dashboard](https://inventory-management-system-iris408.vercel.app/) |
+| Backend API | [PartsPilot API](https://inventory-management-system-1wcw.onrender.com/) |
+| Swagger Docs | [PartsPilot API](https://inventory-management-system-1wcw.onrender.com/docs) |
+
+> The production deployment URLs retain the original project hostname while the product is now branded as PartsPilot.
 
 ### Demo Login
 
@@ -46,7 +46,7 @@ The core full-stack application is complete and deployed. Future development wil
 
 ## Features
 
-- Full-stack inventory dashboard
+- Full-stack inventory analytics dashboard
 - User login and authenticated dashboard access
 - Create, view, edit, and delete inventory items
 - Search products by name
@@ -88,8 +88,8 @@ The core full-stack application is complete and deployed. Future development wil
 Clone the repository:
 
 ```bash
-git clone https://github.com/Iris408/inventory-management-system.git
-cd inventory-management-system
+git clone https://github.com/Iris408/partspilot.git
+cd parts-pilot
 ```
 
 Run with Docker Compose:
@@ -123,7 +123,7 @@ http://localhost:5174
 ## Project Structure
 
 ```text
-inventory-management-system/
+parts-pilot/
 ├── backend/
 │   ├── app/
 │   ├── main.py

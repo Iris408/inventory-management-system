@@ -1,11 +1,11 @@
 # Setup Guide
 
-This document explains how to run the Inventory Management System locally.
+This document explains how to run the Inventory Analytics Platform locally.
 
 ## Project Structure
 
 ```text
-inventory-management-system/
+inventory-analytics-platform/
   backend/
   frontend/
   docs/
@@ -71,7 +71,7 @@ npm run dev
 Open the frontend:
 
 ```text
-http://localhost:5173
+http://localhost:5174
 ```
 
 The backend API must be running separately for API requests to work.
@@ -91,8 +91,8 @@ Open the services:
 | Service | URL |
 | --- | --- |
 | Frontend | http://localhost:5174 |
-| Backend API | http://localhost:8000 |
-| Swagger Documentation | http://localhost:8000/docs |
+| Backend API | http://localhost:8001 |
+| Swagger Documentation | http://localhost:8001/docs |
 
 Vite runs on port `5173` inside the frontend container. Docker maps that internal port to `localhost:5174` on the host machine.
 
@@ -121,7 +121,7 @@ uvicorn main:app --reload --port 8000
 Open Swagger UI:
 
 ```text
-http://127.0.0.1:8000/docs
+http://127.0.0.1:8001/docs
 ```
 
 ## Docker Services
@@ -227,26 +227,26 @@ No output means the check passed.
 
 ## Demo Account
 
-Use the following account to evaluate the application:
+Use the following account to access the platform:
 
 ```text
 Username: demo_recruiter
 Password: InventoryDemo2026!
 ```
 
-The demo account is intended for portfolio review and uses demonstration data only.
+The demo account is intended for portfolio and demo review and uses demonstration data only.
 
 ## Suggested Demo Flow
 
 1. Open the live frontend.
 2. Log in with the demo account.
 3. View the dashboard overview.
-4. Add a new inventory item.
-5. Edit an existing item.
-6. Search for an item by name.
-7. Filter items by category.
-8. Sort items by price or quantity.
-9. Delete a test item.
+4. Add a new inventory product.
+5. Edit an existing product.
+6. Search for a product by name.
+7. Filter products by category.
+8. Sort products by price or quantity.
+9. Delete a product.
 10. Open Swagger API documentation to review the backend endpoints.
 
 ## Stopping the Application
