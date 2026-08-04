@@ -10,6 +10,8 @@ from app.routes.item_routes import router as item_router
 from app.routes.auth_routes import router as auth_router
 from app.routes import reports
 
+IS_TESTING = os.getenv("TESTING", "false").lower() == "true"
+
 app = FastAPI(
     title="PartsPilot API",
     description=(
@@ -48,8 +50,8 @@ app.add_middleware(
 
 @app.on_event("startup")
 def create_database_tables():
-    Base.metadata.create_all(bind=engine, checkfirst=True)
-
+    if not IS_TESTING:
+        Base.metadata.create_all(bind=engine, checkfirst=True)
 
 @app.get("/")
 def home():
