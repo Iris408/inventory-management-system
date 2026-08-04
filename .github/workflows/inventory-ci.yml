@@ -60,11 +60,13 @@ jobs:
           fi
 
       - name: Run backend tests if available
+        env:
+          TESTING: "true"
         run: |
           if [ -d backend/tests ]; then
-            cd backend && pytest
+            cd backend && python -m pytest -v
           elif [ -d tests ]; then
-            pytest
+            python -m pytest -v
           else
             echo "No backend tests folder found"
           fi

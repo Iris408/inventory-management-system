@@ -84,3 +84,10 @@ jobs:
       - name: Check FastAPI app import
         run: |
           python -c "from main import app; print('FastAPI app imported successfully')"
+      
+      # EN: pytest step
+      # JP: pytestステップ    
+      - name: Run backend tests
+        env:
+          TESTING: "true"
+        run: python -m pytest -v     
