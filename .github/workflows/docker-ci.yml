@@ -14,15 +14,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Validate Docker Compose
+        run: docker compose config --quiet
 
       - name: Build Docker Compose services
-        run: |
-          if [ -f docker-compose.yml ]; then
-            docker compose build
-          elif [ -f compose.yml ]; then
-            docker compose -f compose.yml build
-          else
-            echo "No Docker Compose file found"
-            exit 1
-          fi
+        run: docker compose build
