@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import desc, asc
+from sqlalchemy import asc, desc, or_
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -11,11 +11,14 @@ from app.services.auth_service import get_current_user
 router = APIRouter()
 
 
-def get_stock_status(quantity):
+def get_stock_status(
+    quantity: int,
+    min_threshold: int
+):
     if quantity == 0:
         return "Out of Stock"
 
-    if quantity <= 5:
+    if quantity <= min_threshold:
         return "Low Stock"
 
     return "In Stock"
@@ -25,12 +28,17 @@ def format_item_response(item):
     return {
         "id": item.id,
         "name": item.name,
+        "sku": item.sku,
         "category": item.category,
         "quantity": item.quantity,
+        "min_threshold": item.min_threshold,
         "price": item.price,
         "created_at": item.created_at,
         "updated_at": item.updated_at,
-        "stock_status": get_stock_status(item.quantity)
+        "stock_status": get_stock_status(
+            item.quantity,
+            item.min_threshold
+        )
     }
 
 
@@ -48,7 +56,10 @@ def get_items(
     query = db.query(Item)
 
     if search:
-        query = query.filter(Item.name.ilike(f"%{search}%"))
+        query = query.filter(
+            Item.name.ilike(f"%{search}%"),
+            Item.sku.ilike(f"%{search}%")
+        )
 
     if category:
         query = query.filter(Item.category.ilike(f"%{category}%"))
@@ -83,18 +94,23 @@ def get_items(
 
 @router.get("/items/low-stock", response_model=list[ItemResponse])
 def get_low_stock_items(
-    threshold: int = Query(default=5),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    items = db.query(Item).filter(
-        Item.quantity <= threshold
-    ).all()
+    items = db.query(Item).all()
 
-    results = []
+    low_stock_items = [
+        item for item in items
+        if (
+            item.quantity > 0
+            and item.quantity <= item.min_threshold
+        )
+    ]
 
-    for item in items:
-        results.append(format_item_response(item))
+    results = [
+        format_item_response(item)
+        for item in low_stock_items
+    ]
 
     return results
 
@@ -137,8 +153,10 @@ def get_inventory_stats(
 
         if item.quantity == 0:
             out_of_stock_count += 1
-        elif item.quantity <= 5:
+
+        elif item.quantity <= item.min_threshold:
             low_stock_count += 1
+
         else:
             in_stock_count += 1    
 
@@ -267,7 +285,7 @@ def get_lowest_stock_item(
         "name": lowest_item.name,
         "category": lowest_item.category,
         "quantity": lowest_item.quantity,
-        "stock_status": get_stock_status(lowest_item.quantity)
+        "stock_status": get_stock_status(lowest_item.quantity, lowest_item.min_threshold)
     }
 
 
@@ -313,10 +331,22 @@ def create_item(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    existing_item = db.query(Item).filter(
+        Item.sku == item.sku
+    ).first()
+
+    if existing_item:
+        raise HTTPException(
+            status_code=409,
+            detail="An item with this SKU already exists"
+        )
+
     new_item = Item(
         name=item.name,
+        sku=item.sku,
         category=item.category,
         quantity=item.quantity,
+        min_threshold=item.min_threshold,
         price=item.price
     )
 
@@ -344,9 +374,22 @@ def update_item(
             detail="Item not found"
         )
 
+    existing_item = db.query(Item).filter(
+        Item.sku == item_data.sku,
+        Item.id != item_id
+    ).first()
+
+    if existing_item:
+        raise HTTPException(
+            status_code=409,
+            detail="An item with this SKU already exists"
+        )
+
     item.name = item_data.name
+    item.sku = item_data.sku
     item.category = item_data.category
     item.quantity = item_data.quantity
+    item.min_threshold = item_data.min_threshold
     item.price = item_data.price
 
     db.commit()
