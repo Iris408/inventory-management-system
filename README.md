@@ -101,13 +101,9 @@ For a more detailed technical breakdown, see the [Project Details](./docs/projec
 
 ## Screenshots
 
-| Dashboard | Inventory Management | Mobile |
-| --- | --- | --- |
-| ![Dashboard](screenshots/01-dashboard-overview.png) | ![Inventory](screenshots/04-search-filter-sort.png) | ![Mobile](screenshots/05-mobile-dashboard.png) |
-
-### API
-
-![Swagger API Docs](screenshots/06-api-docs.png)
+| Dashboard | Inventory Management | Mobile | API |
+| --- | --- | --- | --- |
+| ![Dashboard](screenshots/01-dashboard-overview.png) | ![Inventory](screenshots/04-search-filter-sort.png) | ![Mobile](screenshots/05-mobile-dashboard.png) | ![Swagger API Docs](screenshots/06-api-docs.png) |
 
 ## Quick Start
 
