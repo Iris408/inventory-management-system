@@ -1,37 +1,80 @@
-# Setup Guide
+# PartsPilot Setup Guide
 
-This document explains how to run the Inventory Analytics Platform locally.
+## Overview
 
-## Project Structure
+This guide explains how to run PartsPilot locally using either a standard development environment or Docker Compose.
 
-```text
-inventory-analytics-platform/
-  backend/
-  frontend/
-  docs/
-  screenshots/
-  docker-compose.yml
+PartsPilot consists of:
+
+- React and TypeScript frontend
+- FastAPI backend
+- PostgreSQL database
+
+Two primary development workflows are supported:
+
+1. Run the frontend and backend locally.
+2. Run the complete application with Docker Compose.
+
+---
+
+## Prerequisites
+
+For local development:
+
+- Git
+- Python 3
+- pip
+- Node.js
+- npm
+- PostgreSQL
+
+For containerised development:
+
+- Docker
+- Docker Compose
+
+---
+
+## Clone the Repository
+
+```bash
+git clone https://github.com/Iris408/partspilot.git
+cd partspilot
 ```
 
-## Environment Variables
+---
 
-### Frontend
+# Environment Configuration
 
-Create a `.env` file inside the `frontend/` folder:
+PartsPilot uses environment variables for frontend configuration, database connections, and authentication.
+
+Real `.env` files, passwords, database credentials, API keys, and production secrets must not be committed to Git.
+
+---
+
+## Frontend Environment
+
+Create a `.env` file inside `frontend/`:
 
 ```env
 VITE_API_URL=http://localhost:8000
 ```
 
-For production, use the deployed backend URL:
+This configuration is used when the FastAPI backend is running locally on port `8000`.
+
+For the deployed frontend, please use the deployed backend URL:
 
 ```env
 VITE_API_URL=https://inventory-management-system-1wcw.onrender.com
 ```
 
-### Backend
+---
 
-Create a `.env` file inside the `backend/` folder:
+## Backend Environment
+
+Create a `.env` file inside `backend/`.
+
+The backend requires configuration similar to:
 
 ```env
 DATABASE_URL=
@@ -40,17 +83,85 @@ ALGORITHM=
 ACCESS_TOKEN_EXPIRE_MINUTES=
 ```
 
-Never commit real `.env` files, passwords, API keys, or production secrets to GitHub.
+Authentication secrets and database credentials should be configured for the environment in which PartsPilot is running.
 
-## Development Workflows
+---
 
-There are two supported ways to run the project.
+# Local Development
 
-### Option 1: Frontend Development Without Docker
+## Backend
 
-Use this workflow for quick React and UI development.
+Move into the backend directory:
 
-Move into the frontend folder:
+```bash
+cd backend
+```
+
+Create a Python virtual environment:
+
+```bash
+python3 -m venv .venv
+```
+
+Activate it on macOS/Linux:
+
+```bash
+source .venv/bin/activate
+```
+
+Install the dependencies:
+
+```bash
+python3 -m pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+> Depending on the local Python installation, commands may use either `python` or `python3`.
+
+---
+
+## Local PostgreSQL Connection
+
+When FastAPI is running directly on the host machine, the database connection should use the host-accessible PostgreSQL address and port.
+
+Example:
+
+```env
+DATABASE_URL=postgresql://USER:PASSWORD@localhost:5436/DATABASE
+```
+
+The exact port depends on the local PostgreSQL configuration.
+
+The important distinction is that `localhost` refers to the host machine when the backend itself is also running on the host.
+
+---
+
+## Run FastAPI
+
+From `backend/`:
+
+```bash
+uvicorn main:app --reload --port 8000
+```
+
+If required:
+
+```bash
+python3 -m uvicorn main:app --reload --port 8000
+```
+
+The local API is available at:
+
+| Service | URL |
+| --- | --- |
+| API | `http://localhost:8000` |
+| Swagger | `http://localhost:8000/docs` |
+
+---
+
+## Frontend
+
+From the project root:
 
 ```bash
 cd frontend
@@ -62,102 +173,173 @@ Install dependencies:
 npm install
 ```
 
-Start the Vite development server:
+Start Vite:
 
 ```bash
 npm run dev
 ```
 
-Open the frontend:
+The frontend development server is available at:
 
 ```text
 http://localhost:5174
 ```
 
-The backend API must be running separately for API requests to work.
+The FastAPI backend must also be running for API-dependent functionality to work.
 
-### Option 2: Full Application With Docker
+---
 
-Use this workflow to run the frontend, backend API, and PostgreSQL database together.
+# Docker Compose
 
-From the project root, run:
+Docker Compose provides the easiest way to run the complete PartsPilot development environment.
+
+The Compose environment starts:
+
+- React / Vite frontend
+- FastAPI API
+- PostgreSQL database
+
+From the project root:
 
 ```bash
 docker compose up --build
 ```
 
-Open the services:
-
-| Service | URL |
-| --- | --- |
-| Frontend | http://localhost:5174 |
-| Backend API | http://localhost:8001 |
-| Swagger Documentation | http://localhost:8001/docs |
-
-Vite runs on port `5173` inside the frontend container. Docker maps that internal port to `localhost:5174` on the host machine.
-
-This avoids a port conflict with other local projects, such as Bloom, which may already use `localhost:5173`.
-
-## Backend Setup Without Docker
-
-Move into the backend folder:
+To run the services in the background:
 
 ```bash
-cd backend
+docker compose up --build -d
 ```
 
-Install Python dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Run the FastAPI server:
-
-```bash
-uvicorn main:app --reload --port 8000
-```
-
-Open Swagger UI:
-
-```text
-http://127.0.0.1:8001/docs
-```
+---
 
 ## Docker Services
 
-Docker Compose starts the following services:
+When running through Docker Compose:
 
-- React and Vite frontend
-- FastAPI backend API
-- PostgreSQL database
+| Service | Host URL |
+| --- | --- |
+| Frontend | `http://localhost:5174` |
+| Backend API | `http://localhost:8001` |
+| Swagger | `http://localhost:8001/docs` |
 
-## Restarting the Application
+The frontend runs on port `5173` inside its container and is mapped to port `5174` on the host.
 
-Stop the running containers:
+The FastAPI service runs on its internal container port and is exposed through port `8001` on the host.
+
+---
+
+# PostgreSQL and Docker Networking
+
+Database configuration differs between local and Docker execution.
+
+This distinction is important.
+
+## Local Backend
+
+When FastAPI runs directly on the host:
+
+```text
+FastAPI
+   │
+   ▼
+localhost:<PostgreSQL host port>
+```
+
+A local connection may therefore resemble:
+
+```env
+DATABASE_URL=postgresql://USER:PASSWORD@localhost:5436/DATABASE
+```
+
+---
+
+## Docker Backend
+
+When FastAPI runs inside Docker Compose, `localhost` refers to the FastAPI container itself.
+
+It does **not** refer to the PostgreSQL container.
+
+The backend must instead connect using the PostgreSQL Compose service name:
+
+```text
+FastAPI container
+       │
+       ▼
+    db:5432
+       │
+       ▼
+PostgreSQL container
+```
+
+A Docker database connection therefore resembles:
+
+```env
+DATABASE_URL=postgresql://USER:PASSWORD@db:5432/DATABASE
+```
+
+PostgreSQL uses its internal container port `5432` for communication between Compose services.
+
+Host port mappings are only required when accessing PostgreSQL from outside the Docker network.
+
+---
+
+# Verify the Docker Environment
+
+Check the current service state:
+
+```bash
+docker compose ps
+```
+
+All required application services should be running and healthy.
+
+Check the API:
+
+```bash
+curl http://localhost:8001/
+```
+
+Open Swagger:
+
+```text
+http://localhost:8001/docs
+```
+
+---
+
+# Restarting PartsPilot
+
+Stop the environment:
 
 ```bash
 docker compose down
 ```
 
-Rebuild and restart the application:
+Rebuild and restart:
 
 ```bash
 docker compose up --build
 ```
 
-## Recreating the Containers
+---
 
-Use this when Docker Compose configuration, Dockerfiles, or dependencies have changed:
+## Force Recreate
+
+When Dockerfiles, Compose configuration, dependencies, or environment configuration have changed:
 
 ```bash
 docker compose down
 docker compose up --build --force-recreate
 ```
 
-## Resetting Docker Data
+---
 
-The following command removes the containers and their named volumes:
+# Resetting PostgreSQL Data
+
+Docker volumes persist PostgreSQL data between normal container restarts.
+
+To remove the containers and their associated Compose-managed volumes:
 
 ```bash
 docker compose down --volumes
@@ -169,90 +351,94 @@ Then rebuild:
 docker compose up --build
 ```
 
-> Warning: removing Docker volumes deletes locally stored PostgreSQL data.
+> **Warning:** removing the PostgreSQL volume deletes locally persisted database data. Back up any data that needs to be retained before resetting the volume.
 
-## Running Tests and Checks
+---
 
-### Backend Tests
+# Development Checks
 
-From the backend folder:
+Before committing changes, run the checks relevant to the area being modified.
+
+## Backend Tests
 
 ```bash
+cd backend
 pytest
 ```
 
-Or run the tests inside Docker:
-
-```bash
-docker compose exec api pytest
-```
-
-### Python Syntax Check
-
-From the backend folder:
+## Python Validation
 
 ```bash
 python3 -m compileall .
 ```
 
-Or inside Docker:
+## Frontend Production Build
 
 ```bash
-docker compose exec api python -m compileall .
-```
-
-### Frontend Build Check
-
-From the frontend folder:
-
-```bash
+cd frontend
 npm run build
 ```
 
-Or inside Docker:
-
-```bash
-docker compose exec frontend npm run build
-```
-
-### Git Whitespace Check
+## Docker Compose Validation
 
 From the project root:
+
+```bash
+docker compose config --quiet
+```
+
+## Git Whitespace Check
 
 ```bash
 git diff --check
 ```
 
-No output means the check passed.
+If there is no output from `git diff --check` this means that the check passed.
 
-## Demo Account
+For the complete testing and CI workflow, please see [Testing](./testing.md).
 
-Use the following account to access the platform:
+---
 
-```text
-Username: demo_recruiter
-Password: InventoryDemo2026!
-```
+# Stopping PartsPilot
 
-The demo account is intended for portfolio and demo review and uses demonstration data only.
-
-## Suggested Demo Flow
-
-1. Open the live frontend.
-2. Log in with the demo account.
-3. View the dashboard overview.
-4. Add a new inventory product.
-5. Edit an existing product.
-6. Search for a product by name.
-7. Filter products by category.
-8. Sort products by price or quantity.
-9. Delete a product.
-10. Open Swagger API documentation to review the backend endpoints.
-
-## Stopping the Application
-
-When finished, stop the Docker services:
+Stop the Docker environment:
 
 ```bash
 docker compose down
 ```
+
+This preserves the PostgreSQL volume.
+
+To also remove persistent Compose volumes:
+
+```bash
+docker compose down -v
+```
+
+Use the volume removal command carefully when working with local data.
+
+---
+
+# Troubleshooting
+
+Common setup problems include:
+
+- Incorrect PostgreSQL host or port
+- Using `localhost` from inside a Docker container
+- Missing environment variables
+- Existing Docker volumes containing older database state
+- Port conflicts with other development projects
+- Frontend API URL pointing to the wrong backend port
+
+See [Troubleshooting](./troubleshooting.md) for detailed diagnostic steps.
+
+---
+
+## Related Documentation
+
+- [Project Details](./project-details.md)
+- [Architecture](./architecture.md)
+- [API Reference](./api-reference.md)
+- [Testing](./testing.md)
+- [Roadmap](./roadmap.md)
+- [Troubleshooting](./troubleshooting.md)
