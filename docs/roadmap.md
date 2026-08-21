@@ -49,25 +49,26 @@ The core PartsPilot application is portfolio-ready.
 
 ## Power BI Analytics
 
-**Status: In Progress** 🚧
+**Status: Complete** ✅
 
 The current priority is completing PartsPilot's dedicated business intelligence layer.
 
-Power BI provides deeper reporting and analysis alongside the operational React dashboard.
+The PartsPilot Power BI inventory analytics dashboard is complete.
 
-Current areas of development include:
+The report currently includes:
 
-- Inventory overview
-- Inventory value analysis
-- Stock distribution
-- Category analysis
-- Low-stock analysis
-- Out-of-stock visibility
-- Additional operational charts
-- Dashboard layout and presentation
-- Reporting usability
+- Total products
+- Total stock quantity
+- Low-stock product count
+- Total inventory value
+- Inventory value by category
+- Product distribution by stock status
+- Stock quantity by category
+- Average unit price by category
+- Category filtering
+- Stock-status filtering
 
-Power BI should complement the application dashboard rather than duplicate it.
+The dashboard uses the current automotive inventory dataset exported from PartsPilot's PostgreSQL database.
 
 ---
 

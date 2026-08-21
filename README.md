@@ -30,7 +30,7 @@ It provides authenticated inventory management, stock monitoring, operational an
 
 PartsPilot is available as a live demonstration with a sample automotive inventory dataset.
 
-Current development is focused on completing the Power BI analytics dashboard, expanding reporting, and final product polish before the project moves primarily into maintenance.
+The Power BI analytics dashboard is complete. Current development is focused on final frontend polish, completing the remaining application pages, and expanding automated test coverage before PartsPilot moves primarily into maintenance.
 
 | Area | Status |
 | --- | --- |
@@ -42,7 +42,7 @@ Current development is focused on completing the Power BI analytics dashboard, e
 | Docker Compose | ✅ Working |
 | GitHub Actions CI | ✅ Working |
 | Deployment | ✅ Live |
-| Power BI dashboard | 🚧 In progress |
+| Power BI dashboard | ✅ Complete |
 
 ## Live Demo
 
@@ -104,6 +104,10 @@ For a more detailed technical breakdown, see the [Project Details](./docs/projec
 | Dashboard | Inventory Management | Mobile | API |
 | --- | --- | --- | --- |
 | ![Dashboard](screenshots/01-dashboard-overview.png) | ![Inventory](screenshots/04-search-filter-sort.png) | ![Mobile](screenshots/05-mobile-dashboard.png) | ![Swagger API Docs](screenshots/06-api-docs.png) |
+
+### Power BI Inventory Analytics
+
+![PartsPilot Power BI Inventory Analytics Dashboard](screenshots/07-powerbi-inventory-analytics.png)
 
 ## Quick Start
 
