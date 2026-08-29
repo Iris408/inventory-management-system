@@ -13,6 +13,8 @@ function PartsInventory() {
   const [showForm, setShowForm] = useState(false)
   const [editItem, setEditItem] = useState<Item | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [page, setPage] = useState(1)
+  const itemsPerPage = 10
 
   const [form, setForm] = useState<NewItem>({
     name: "",
@@ -26,6 +28,9 @@ function PartsInventory() {
       setError(null)
 
       const params = new URLSearchParams()
+
+      params.append("limit", String(itemsPerPage))
+      params.append("offset", String((page - 1) * itemsPerPage))
 
       if (search) {
         params.append("search", search)
@@ -163,6 +168,10 @@ function PartsInventory() {
     fetchItems()
   }, [search, category, sortBy, order])
 
+  useEffect(() => {
+    setPage(1)
+  }, [search, category, sortBy, order])
+
   return (
     <div>
       <section className="mb-6 flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-6 sm:flex-row sm:items-center sm:justify-between">
@@ -172,7 +181,7 @@ function PartsInventory() {
           </p>
 
           <h1 className="mt-1 text-3xl font-bold text-slate-900">
-            Parts Inventory
+            Inventory Management
           </h1>
 
           <p className="mt-2 text-sm text-slate-500">
@@ -340,8 +349,8 @@ function PartsInventory() {
       <section className="mb-6 rounded-2xl border border-slate-200 bg-white p-5">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <input
-            className="rounded-xl border border-slate-300 px-4 py-3 text-sm"
-            placeholder="Search by item name..."
+            className="rounded-lg border border-slate-300 px-4 py-3 text-sm"
+            placeholder="Search by Item Name, SKU, or Category..."
             value={search}
             onChange={(event) =>
               setSearch(event.target.value)
@@ -349,7 +358,7 @@ function PartsInventory() {
           />
 
           <select
-            className="rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm"
+            className="rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm"
             value={category}
             onChange={(event) =>
               setCategory(event.target.value)
@@ -370,7 +379,7 @@ function PartsInventory() {
           </select>
 
           <select
-            className="rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm"
+            className="rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm"
             value={sortBy}
             onChange={(event) =>
               setSortBy(event.target.value)
@@ -425,11 +434,11 @@ function PartsInventory() {
       <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
         <div className="border-b border-slate-200 px-6 py-5">
           <h2 className="font-bold text-slate-900">
-            Inventory
+            Inventory Management
           </h2>
 
           <p className="text-sm text-slate-500">
-            Manage parts, quantities, prices and stock status.
+            Manage parts, stock statuses, quantities, and unit prices.
           </p>
         </div>
 
@@ -438,11 +447,11 @@ function PartsInventory() {
             <thead className="bg-slate-50 text-xs uppercase text-slate-500">
               <tr>
                 <th className="px-6 py-4">
-                  ID
+                  ID / SKU
                 </th>
 
                 <th className="px-6 py-4">
-                  Name
+                  ItemName
                 </th>
 
                 <th className="px-6 py-4">
@@ -454,7 +463,7 @@ function PartsInventory() {
                 </th>
 
                 <th className="px-6 py-4">
-                  Price
+                  Cost per Unit
                 </th>
 
                 <th className="px-6 py-4">
@@ -479,7 +488,7 @@ function PartsInventory() {
                     </p>
 
                     <p className="mt-1 text-sm text-slate-400">
-                      Add your first item to begin managing inventory.
+                      Add your first item to begin managing your inventory.
                     </p>
                   </td>
                 </tr>
@@ -489,8 +498,14 @@ function PartsInventory() {
                     key={item.id}
                     className="transition hover:bg-slate-50"
                   >
-                    <td className="px-6 py-4 text-slate-500">
-                      {item.id}
+                    <td className="px-6 py-4">
+                      <p className="font-medium text-slate-700">
+                        #{item.id}
+                      </p>
+
+                      <p className="mt-0.5 text-xs text-slate-400">
+                        {item.sku}
+                      </p>
                     </td>
 
                     <td className="px-6 py-4 font-semibold text-slate-800">
@@ -523,22 +538,18 @@ function PartsInventory() {
                       <div className="flex gap-3">
                         <button
                           type="button"
-                          onClick={() =>
-                            setEditItem(item)
-                          }
-                          className="text-xs font-bold text-blue-600"
+                          onClick={() => setEditItem(item)}
+                          className="text-medium font-bold text-blue-600"
                         >
-                          Edit
+                          ✎
                         </button>
-
+                  
                         <button
                           type="button"
-                          onClick={() =>
-                            deleteItem(item.id)
-                          }
-                          className="text-xs font-bold text-red-500"
+                          onClick={() => deleteItem(item.id)}
+                          className="text-medium font-bold text-red-500"
                         >
-                          Delete
+                          ✖
                         </button>
                       </div>
                     </td>

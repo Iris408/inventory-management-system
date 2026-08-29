@@ -1,12 +1,14 @@
 export type Item = {
   id: number
   name: string
+  sku: string
   category: string
   quantity: number
+  min_threshold: number
   price: number
-  stock_status: string
   created_at: string
   updated_at: string
+  stock_status: string
 }
 
 export type NewItem = {

@@ -57,8 +57,10 @@ def get_items(
 
     if search:
         query = query.filter(
-            Item.name.ilike(f"%{search}%"),
-            Item.sku.ilike(f"%{search}%")
+            or_(
+                Item.name.ilike(f"%{search}%"),
+                Item.sku.ilike(f"%{search}%"),
+            )
         )
 
     if category:

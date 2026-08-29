@@ -17,7 +17,7 @@ function Sidebar({ onLogout }: SidebarProps) {
     <aside className="hidden min-h-screen w-56 flex-col border-r border-slate-200 bg-white px-4 py-6 lg:flex">
       <div className="mb-10 flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-600 font-bold text-white">
-          𓎚 PP
+          ⌬ PP
         </div>
 
         <div>

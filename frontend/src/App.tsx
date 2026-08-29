@@ -6,9 +6,11 @@ import {
 } from "react-router-dom"
 
 import AppLayout from "./components/layout/AppLayout"
+
 import Dashboard from "./pages/Dashboard"
-import Login from "./pages/Login"
 import Inventory from "./pages/Inventory"
+import Landing from "./pages/Landing"
+import Login from "./pages/Login"
 import Reports from "./pages/Reports"
 import Settings from "./pages/Settings"
 import Suppliers from "./pages/Suppliers"
@@ -23,24 +25,47 @@ function App() {
     setToken(null)
   }
 
-  // =========================================
-  // EN: Show login page when no token exists
-  // JP: トークンがない場合はログイン画面を表示
-  // =========================================
-  if (!token) {
-    return <Login onLogin={setToken} />
-  }
-
   return (
     <Routes>
       {/* =========================================
-      EN: Shared authenticated application layout
-      JP: 認証後の共通アプリレイアウト
+      EN: Public routes
+      JP: 公開ルート
+      ========================================= */}
+
+      <Route
+        path="/"
+        element={<Landing onLogin={setToken} />}
+      />
+
+      <Route
+        path="/login"
+        element={
+          token ? (
+            <Navigate
+              to="/dashboard"
+              replace
+            />
+          ) : (
+            <Login onLogin={setToken} />
+          )
+        }
+      />
+
+      {/* =========================================
+      EN: Authenticated application
+      JP: 認証済みアプリケーション
       ========================================= */}
 
       <Route
         element={
-          <AppLayout onLogout={logout} />
+          token ? (
+            <AppLayout onLogout={logout} />
+          ) : (
+            <Navigate
+              to="/login"
+              replace
+            />
+          )
         }
       >
         <Route
@@ -54,13 +79,13 @@ function App() {
         />
 
         <Route
-          path="/reports"
-          element={<Reports />}
+          path="/suppliers"
+          element={<Suppliers />}
         />
 
         <Route
-          path="/suppliers"
-          element={<Suppliers />}
+          path="/reports"
+          element={<Reports />}
         />
 
         <Route
@@ -70,30 +95,15 @@ function App() {
       </Route>
 
       {/* =========================================
-      EN: Default route
-      JP: デフォルトルート
-      ========================================= */}
-
-      <Route
-        path="/"
-        element={
-          <Navigate
-            to="/dashboard"
-            replace
-          />
-        }
-      />
-
-      {/* =========================================
-      EN: Unknown routes return to dashboard
-      JP: 不明なルートはダッシュボードへ戻す
+      EN: Unknown routes return to public landing page
+      JP: 不明なルートは公開トップページへ戻す
       ========================================= */}
 
       <Route
         path="*"
         element={
           <Navigate
-            to="/dashboard"
+            to="/"
             replace
           />
         }
