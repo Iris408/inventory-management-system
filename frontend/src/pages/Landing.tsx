@@ -263,7 +263,7 @@ export default function Landing({
                 disabled={demoLoading}
                 className="landing__button landing__button--primary"
               >
-                View Live Demo
+                {demoLoading ? "Opening demo..." : "View Live Demo"}
               </button>
 
               <Link
@@ -521,7 +521,7 @@ export default function Landing({
                 disabled={demoLoading}
                 className="landing__button landing__button--primary"
               >
-                View Live Demo
+                {demoLoading ? "Opening demo..." : "View Live Demo"}
               </button>
 
               <Link

@@ -4,10 +4,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Base, engine
+
 from app.models.item_model import Item
 from app.models.user_model import User
+from app.models.supplier_model import Supplier
+
 from app.routes.item_routes import router as item_router
 from app.routes.auth_routes import router as auth_router
+from app.routes.supplier_routes import router as supplier_router
 from app.routes import reports
 
 IS_TESTING = os.getenv("TESTING", "false").lower() == "true"
@@ -67,3 +71,4 @@ def health_check():
 app.include_router(item_router)
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])
 app.include_router(reports.router)
+app.include_router(supplier_router)

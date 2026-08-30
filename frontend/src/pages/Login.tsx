@@ -260,7 +260,7 @@ function Login({ onLogin }: LoginProps) {
               <div className="mt-4 text-center">
                 <Link
                   to="/"
-                  className="text-xs font-medium text-slate-300 transition hover:text-white"
+                  className="text-sm font-medium text-slate-300 transition hover:text-white"
                 >
                   ← Back to PartsPilot
                 </Link>
