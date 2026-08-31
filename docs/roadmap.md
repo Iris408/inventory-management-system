@@ -91,6 +91,8 @@ Normal maintenance work may include:
 - Small UI/UX corrections
 - Power BI maintenance
 - Development workflow automation
+- Add CodeQL security analysis workflow
+- Add dependency review workflow for pull requests
 
 These changes should improve the reliability and maintainability of the existing application rather than substantially expand its scope.
 

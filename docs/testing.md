@@ -369,6 +369,14 @@ Frontend component or interaction testing may also be introduced later where it 
 
 These improvements are not requirements for PartsPilot v2.0.0 to remain feature complete.
 
+### Security and dependency checks
+
+Planned maintenance improvements:
+
+- Add GitHub CodeQL analysis for Python and JavaScript/TypeScript.
+- Add dependency review checks for pull requests.
+- Verify whether backend CI tests use SQLite or PostgreSQL and align the CI database configuration accordingly.
+
 ---
 
 # Regression Testing
