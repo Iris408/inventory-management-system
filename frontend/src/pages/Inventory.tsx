@@ -851,39 +851,6 @@ function PartsInventory() {
               </p>
 
               <p className="mt-1 text-sm text-slate-500">
-                Try adjusting your filters or add a new
-                inventory item.
-              </p>
-            </div>
-          ) : (
-            items.map((item) => (
-              <article
-                key={item.id}
-                className="p-5"
-                aria-labelledby={`mobile-item-${item.id}`}
-              >
-                {/* mobile card contents */}
-              </article>
-            ))
-          )}
-        </div>
-
-        {/* MOBILE VERSION */}
-        <div className="divide-y divide-slate-100 md:hidden">
-          {loading ? (
-            <div
-              className="px-5 py-10 text-center text-sm text-slate-500"
-              role="status"
-            >
-              Loading inventory…
-            </div>
-          ) : items.length === 0 ? (
-            <div className="px-5 py-10 text-center">
-              <p className="font-semibold text-slate-700">
-                No parts found
-              </p>
-
-              <p className="mt-1 text-sm text-slate-500">
                 Try adjusting your filters or add a new inventory item.
               </p>
             </div>

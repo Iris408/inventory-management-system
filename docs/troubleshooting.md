@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide covers common development, Docker, database, frontend, backend, and CI problems that may occur while working with PartsPilot.
+This guide covers common development, Docker, database, frontend, backend, authentication, and CI problems that may occur while working with PartsPilot.
 
 For installation and environment configuration, see the [Setup Guide](./setup.md).
 
@@ -10,7 +10,7 @@ For installation and environment configuration, see the [Setup Guide](./setup.md
 
 # Quick Diagnostics
 
-Before investigating a specific issue, check the current environment.
+Before investigating a specific issue, confirm the current environment.
 
 ## Docker Services
 
@@ -66,6 +66,32 @@ git status
 
 ---
 
+# Current Local Development Environment
+
+The known working PartsPilot development environment is:
+
+```text
+PostgreSQL
+Docker
+localhost:5436
+
+        │
+        ▼
+
+FastAPI
+localhost:8001
+
+        │
+        ▼
+
+React / Vite
+localhost:5173
+```
+
+When troubleshooting, first confirm that the expected service is running on the expected port.
+
+---
+
 # PostgreSQL Connection Refused
 
 ## Example
@@ -80,21 +106,38 @@ Connection refused
 
 ## Likely Cause
 
-When FastAPI runs inside Docker, `localhost` refers to the FastAPI container itself.
+The correct PostgreSQL address depends on where FastAPI is running.
 
-It does not refer to the PostgreSQL container.
+If FastAPI runs directly on the host, it can connect through the host-mapped PostgreSQL port.
 
-A configuration such as:
+If FastAPI runs inside Docker, `localhost` refers to the FastAPI container itself and does not refer to PostgreSQL.
+
+---
+
+## Local FastAPI
+
+When FastAPI runs directly on the host and PostgreSQL runs in Docker:
 
 ```env
 DATABASE_URL=postgresql://USER:PASSWORD@localhost:5436/DATABASE
 ```
 
-may work when the backend runs directly on the host but will not work as the connection between Docker Compose services.
+The connection path is:
 
-## Docker Configuration
+```text
+FastAPI
+localhost:8001
+      │
+      ▼
+PostgreSQL
+localhost:5436
+```
 
-Inside the Docker Compose network, use the PostgreSQL service name and internal PostgreSQL port:
+---
+
+## Docker FastAPI
+
+When FastAPI runs inside Docker Compose, use the PostgreSQL Compose service name and internal port:
 
 ```env
 DATABASE_URL=postgresql://USER:PASSWORD@db:5432/DATABASE
@@ -112,54 +155,13 @@ FastAPI container
 PostgreSQL container
 ```
 
-Check the actual PostgreSQL service name in `docker-compose.yml` before changing the connection string.
-
----
-
-# Local vs Docker Database Ports
-
-PartsPilot can use different database addresses depending on where FastAPI is running.
-
-## Local Backend
-
-```text
-FastAPI
-   │
-   ▼
-localhost:<host PostgreSQL port>
-```
-
-Example:
-
-```env
-DATABASE_URL=postgresql://USER:PASSWORD@localhost:5436/DATABASE
-```
-
-## Docker Backend
-
-```text
-FastAPI container
-       │
-       ▼
-PostgreSQL service
-       │
-       ▼
-db:5432
-```
-
-Example:
-
-```env
-DATABASE_URL=postgresql://USER:PASSWORD@db:5432/DATABASE
-```
-
-The host-mapped PostgreSQL port is not required for communication between containers on the same Compose network.
+Check the current service name in `docker-compose.yml` before modifying the connection string.
 
 ---
 
 # PostgreSQL Container Is Healthy but API Fails
 
-A healthy database container does not automatically mean the API is using the correct database configuration.
+A healthy PostgreSQL container does not guarantee that FastAPI is using the correct database configuration.
 
 Check:
 
@@ -167,13 +169,15 @@ Check:
 docker compose ps
 ```
 
-Then inspect the API logs:
+If FastAPI is running locally, inspect its terminal output.
+
+If FastAPI is running in Docker:
 
 ```bash
 docker compose logs api
 ```
 
-If PostgreSQL is healthy but FastAPI reports a connection error, verify:
+Verify:
 
 - Database hostname
 - Database port
@@ -183,6 +187,12 @@ If PostgreSQL is healthy but FastAPI reports a connection error, verify:
 - `DATABASE_URL`
 - Docker Compose service name
 - Environment variable overrides
+
+For the current host-based FastAPI workflow, PostgreSQL should normally be reachable through:
+
+```text
+localhost:5436
+```
 
 ---
 
@@ -197,68 +207,98 @@ PostgreSQL Database directory appears to contain a database;
 Skipping initialization
 ```
 
-this normally means an existing PostgreSQL volume is being reused.
+this normally means that an existing PostgreSQL volume is being reused.
 
-This is expected behaviour when persistent database data already exists.
+This is expected when persistent database data already exists.
 
 ---
 
-## Reset the Local Database
+# Inspect the PostgreSQL Database
 
-If the existing database state needs to be removed:
+The current PartsPilot PostgreSQL container can be accessed with:
+
+```bash
+docker compose exec db psql -U inventory_user -d partspilot_db
+```
+
+List the current tables:
+
+```text
+\dt
+```
+
+Expected application tables include:
+
+```text
+alembic_version
+items
+suppliers
+users
+```
+
+Exit PostgreSQL with:
+
+```text
+\q
+```
+
+---
+
+# Reset the Local Database
+
+If the local database genuinely needs to be reset:
 
 ```bash
 docker compose down -v
 ```
 
-Then rebuild:
+Then restart the required services.
+
+For the current development workflow:
 
 ```bash
-docker compose up --build
+docker compose up -d db
 ```
 
 > **Warning:** `docker compose down -v` removes Compose-managed volumes and deletes locally persisted PostgreSQL data.
 
-Do not use it as a routine troubleshooting command when the existing data needs to be retained.
+Do not use this as a routine troubleshooting step when the existing data needs to be retained.
 
 ---
 
 # Database Schema Problems
 
-If the application code expects a database structure that differs from the current PostgreSQL schema, verify the migration state.
+If the application code expects a structure that differs from the current PostgreSQL schema, verify the database and migration state.
 
-PartsPilot uses Alembic for database schema changes.
+PartsPilot uses Alembic for schema changes.
 
 Check that:
 
 - The expected migration exists.
 - The correct database is being used.
-- The database schema matches the application models.
+- The database schema matches the SQLAlchemy models.
+- The expected tables exist.
 - An older Docker volume is not retaining an incompatible schema.
 
-Avoid deleting the database immediately. Determine whether the problem should be resolved through a migration first.
+Avoid deleting the database immediately.
+
+Determine whether the issue should be fixed through the migration state first.
 
 ---
 
 # Backend Does Not Start
 
-Check the backend logs:
-
-```bash
-docker compose logs api
-```
-
-Or run FastAPI locally:
+For the current local development workflow:
 
 ```bash
 cd backend
-uvicorn main:app --reload --port 8000
+uvicorn main:app --reload --port 8001
 ```
 
 If required:
 
 ```bash
-python3 -m uvicorn main:app --reload --port 8000
+python3 -m uvicorn main:app --reload --port 8001
 ```
 
 Common causes include:
@@ -267,40 +307,76 @@ Common causes include:
 - Incorrect imports
 - Missing environment variables
 - PostgreSQL connection failure
-- Invalid database configuration
+- Invalid `DATABASE_URL`
 - Python syntax errors
+- Port `8001` already in use
 
-Run:
+Check Python source compilation with:
 
 ```bash
 python3 -m compileall .
 ```
 
-to check Python source compilation.
+Run backend tests with:
+
+```bash
+pytest
+```
 
 ---
 
 # Frontend Cannot Reach Backend
 
-If the frontend loads but API-dependent functionality fails, check `VITE_API_URL`.
+If the frontend loads but API-dependent functionality fails, check:
 
-For a locally running backend:
-
-```env
-VITE_API_URL=http://localhost:8000
+```text
+frontend/.env
 ```
 
-The deployed frontend should use the deployed backend URL instead.
+The current local value should be:
+
+```env
+VITE_API_URL=http://localhost:8001
+```
 
 Also verify:
 
-- FastAPI is running.
-- The configured API port is correct.
-- The frontend environment file is being loaded.
-- CORS configuration permits the frontend origin.
-- The backend deployment is available.
+- FastAPI is running on port `8001`.
+- PostgreSQL is running.
+- The frontend `.env` file is being loaded.
+- The requested API endpoint is correct.
+- CORS allows the frontend origin.
+- The authentication token is present when required.
 
-After changing Vite environment variables, restart the development server.
+After changing Vite environment variables, restart the Vite development server.
+
+---
+
+# CORS Errors
+
+If the browser reports a CORS error, confirm that the frontend origin is permitted by the FastAPI CORS configuration.
+
+The current local frontend normally runs at:
+
+```text
+http://localhost:5173
+```
+
+The backend normally runs at:
+
+```text
+http://localhost:8001
+```
+
+A CORS problem may appear even when the backend itself is working correctly.
+
+Check the browser developer tools for:
+
+- Request URL
+- Request method
+- Request headers
+- Response headers
+- Response status
 
 ---
 
@@ -313,7 +389,7 @@ cd frontend
 npm run build
 ```
 
-Read the first meaningful TypeScript or Vite error before making changes.
+Read the first meaningful TypeScript or Vite error before changing unrelated files.
 
 Common causes include:
 
@@ -321,26 +397,50 @@ Common causes include:
 - Deleted or renamed components
 - Incorrect import paths
 - TypeScript type errors
-- Stale legacy files still included in compilation
 - Missing dependencies
+- Environment configuration problems
+- Stale legacy files still included in compilation
 
-For example, an old component may still contain:
+For example, an unused legacy file may still reference a deleted component.
 
-```text
-Cannot find module './components/...'
+If the file is no longer part of the intended application, removing the obsolete file may be more appropriate than rebuilding an unused dependency around it.
+
+---
+
+# Vite Development Server Does Not Start
+
+Start the frontend with:
+
+```bash
+cd frontend
+npm run dev
 ```
 
-even if that component is no longer part of the active application.
+The expected development URL is:
 
-Determine whether the referenced code is still required before recreating a deleted dependency.
+```text
+http://localhost:5173
+```
 
-If the file is obsolete, removing the legacy file may be more appropriate than restoring unused code.
+Common causes include:
+
+- Missing `node_modules`
+- Port `5173` already in use
+- Invalid Vite configuration
+- Missing environment variables
+- Dependency installation problems
+
+If dependencies are missing:
+
+```bash
+npm install
+```
 
 ---
 
 # Docker Build Is Very Slow
 
-If Docker spends a long time transferring the frontend build context, inspect the frontend `.dockerignore`.
+If Docker spends a long time transferring the build context, inspect the relevant `.dockerignore`.
 
 Large directories such as:
 
@@ -350,7 +450,7 @@ dist/
 .git/
 ```
 
-should generally not be sent to the Docker daemon when they are unnecessary for the image build.
+should generally not be included when they are unnecessary for the image build.
 
 Also inspect the reported build-context size.
 
@@ -369,53 +469,64 @@ docker compose down
 docker compose up --build
 ```
 
-For a forced recreation:
+For forced recreation:
 
 ```bash
 docker compose down
 docker compose up --build --force-recreate
 ```
 
-If necessary, inspect the current containers:
+Inspect the current containers with:
 
 ```bash
 docker compose ps
+```
+
+If only PostgreSQL is needed for the local development workflow, restarting the database alone is usually sufficient:
+
+```bash
+docker compose up -d db
 ```
 
 ---
 
 # Port Already in Use
 
-PartsPilot deliberately uses host ports that can differ from the application's internal container ports.
-
-Current development examples include:
+Current development ports are:
 
 ```text
-Frontend: localhost:5174
-Docker API: localhost:8001
+Frontend:   localhost:5173
+FastAPI:    localhost:8001
+PostgreSQL: localhost:5436
 ```
 
-If Docker reports that a port is already allocated, identify the process or container currently using it.
+If a port is already allocated, first identify whether an old PartsPilot process or container is still running.
 
-Check running containers:
+Check Docker:
 
 ```bash
 docker ps
 ```
 
-Stop unused PartsPilot containers with:
+Check Compose:
+
+```bash
+docker compose ps
+```
+
+Stop unused Compose services with:
 
 ```bash
 docker compose down
 ```
 
-Do not change ports unnecessarily if the conflict is caused by an old container that should no longer be running.
+Avoid changing PartsPilot's configured ports unnecessarily when the conflict is caused by an old process or container.
 
 ---
 
 # Backend Tests Fail
 
-Run the tests locally:
+Run:
 
 ```bash
 cd backend
@@ -434,7 +545,7 @@ Common causes include:
 - Changed response schemas
 - Test assumptions that no longer match the application
 
-Test collection failures should be fixed before debugging individual assertions because the tests have not yet started executing.
+Test collection failures should be resolved before debugging individual assertions because the tests have not yet started executing.
 
 ---
 
@@ -451,18 +562,137 @@ verify that test files follow pytest naming conventions.
 For example:
 
 ```text
-tests/
-└── test_items.py
+backend/
+└── tests/
+    └── test_items.py
 ```
 
-Test functions should also normally begin with:
+Test functions should normally begin with:
 
 ```python
 def test_example():
     ...
 ```
 
-An empty test file can exist without providing any tests, but CI may treat a run with zero collected tests as a failure.
+An empty test file may exist without containing tests, but CI can treat a run with zero collected tests as unsuccessful depending on the workflow configuration.
+
+---
+
+# Authentication Problems
+
+If login succeeds but protected requests fail, verify:
+
+- An access token was returned.
+- The frontend stored the expected token.
+- Requests include the `Authorization` header.
+- The header uses the `Bearer` scheme.
+- The token has not expired.
+- The backend is using the expected authentication configuration.
+
+Authenticated requests should resemble:
+
+```text
+Authorization: Bearer <access_token>
+```
+
+The public frontend route:
+
+```text
+/login
+```
+
+is separate from the backend authentication endpoint:
+
+```text
+/auth/login
+```
+
+This distinction is intentional.
+
+---
+
+# Authentication Token Missing
+
+PartsPilot's frontend API service expects an authentication token for protected requests.
+
+If the token is missing, API operations can fail before the request is sent.
+
+Check browser storage and confirm that login has successfully stored the expected token.
+
+If a request returns:
+
+```text
+401 Unauthorized
+```
+
+the frontend removes the stored token as part of the current authentication handling.
+
+Logging in again should create a new authenticated session.
+
+---
+
+# Swagger Works but Frontend Does Not
+
+If API operations work through Swagger but fail through React, the backend may not be the source of the problem.
+
+Check:
+
+```text
+React
+  │
+  ├── VITE_API_URL
+  ├── request path
+  ├── authentication token
+  ├── HTTP method
+  ├── request body
+  └── CORS
+       │
+       ▼
+    FastAPI
+```
+
+Use browser developer tools to inspect:
+
+- Request URL
+- HTTP method
+- Request headers
+- Response status
+- Response body
+
+This helps separate frontend request problems from backend API problems.
+
+---
+
+# Inventory Data Does Not Refresh
+
+If an inventory operation succeeds but the interface does not reflect the change, first confirm whether the backend operation completed successfully.
+
+Check:
+
+1. Browser network response.
+2. FastAPI response status.
+3. PostgreSQL record if necessary.
+4. Frontend state refresh logic.
+
+Do not assume a successful API request automatically means the local React state has been refreshed.
+
+This distinction is especially useful when debugging add, edit, and delete workflows.
+
+---
+
+# Supplier Data Does Not Refresh
+
+Supplier CRUD follows the same API-driven pattern as inventory.
+
+If supplier changes do not appear in the UI:
+
+- Confirm the `/suppliers` request succeeded.
+- Check the HTTP response.
+- Confirm the PostgreSQL record changed.
+- Verify the frontend refreshes or updates supplier state.
+- Check active search or filter settings.
+
+A successfully created or updated supplier may be hidden by the current frontend filters.
 
 ---
 
@@ -476,10 +706,10 @@ Check:
 - Node version
 - Installed dependencies
 - Environment variables
-- File path casing
-- Operating system differences
+- File-path casing
+- Operating-system differences
 - Working directory
-- Database/service configuration
+- Database or service configuration
 
 Start with the exact command that failed in GitHub Actions and reproduce it locally where possible.
 
@@ -489,15 +719,18 @@ Do not change unrelated application code until the failing CI step is understood
 
 # Docker CI Fails
 
-First determine whether the failure occurs during:
+First determine where the failure occurs:
 
 ```text
 Dockerfile parsing
-        ↓
+        │
+        ▼
 Dependency installation
-        ↓
+        │
+        ▼
 Application build
-        ↓
+        │
+        ▼
 Image creation
 ```
 
@@ -517,55 +750,23 @@ Inspect the first meaningful build error rather than only the final Docker failu
 
 ---
 
-# Authentication Problems
+# Deployment-Related Issues
 
-If login succeeds but authenticated requests fail, verify:
+The React frontend is currently hosted on Vercel.
 
-- An access token was returned.
-- The frontend stored the expected token.
-- Requests include the `Authorization` header.
-- The header uses the `Bearer` scheme.
-- The token has not expired.
-- The backend is using the expected authentication configuration.
+The FastAPI backend and PostgreSQL database are not currently publicly deployed.
 
-Authenticated requests should resemble:
+If the Vercel frontend cannot access authenticated application functionality, confirm whether the configured `VITE_API_URL` points to a reachable public backend.
 
-```text
-Authorization: Bearer <access_token>
+A value such as:
+
+```env
+VITE_API_URL=http://localhost:8001
 ```
 
-Swagger can also be used to test protected API behaviour independently of the frontend.
+only works when the frontend is running in an environment that can reach that local backend.
 
----
-
-# Swagger Works but Frontend Does Not
-
-If API operations work through Swagger but fail through React, the backend itself may not be the source of the problem.
-
-Check:
-
-```text
-React
-  │
-  ├── VITE_API_URL
-  ├── request path
-  ├── authentication token
-  ├── request body
-  └── CORS
-       │
-       ▼
-    FastAPI
-```
-
-Use the browser developer tools to inspect:
-
-- Request URL
-- HTTP method
-- Request headers
-- Response status
-- Response body
-
-This helps separate frontend request problems from backend API problems.
+When a public backend is deployed, the Vercel environment variable should use that public HTTPS API URL.
 
 ---
 
@@ -604,47 +805,59 @@ Apply smallest relevant fix
 Run validation again
 ```
 
-Avoid rebuilding or resetting the entire application unless the evidence indicates that it is necessary.
+Avoid rebuilding, resetting, or modifying the entire application unless the evidence indicates that it is necessary.
 
 ---
 
 # Useful Commands
 
 ```bash
-# Application state
+# Docker state
 docker compose ps
 
-# All logs
+# All Docker logs
 docker compose logs
 
-# API logs
+# API container logs
 docker compose logs api
 
 # Database logs
 docker compose logs db
 
-# Frontend logs
+# Frontend container logs
 docker compose logs frontend
+
+# Start PostgreSQL only
+docker compose up -d db
+
+# Open PostgreSQL
+docker compose exec db psql -U inventory_user -d partspilot_db
 
 # Validate Compose
 docker compose config --quiet
 
+# Run FastAPI locally
+cd backend && uvicorn main:app --reload --port 8001
+
 # Backend tests
 cd backend && pytest
 
-# Frontend build
-cd frontend && npm run build
-
-# Check Python source
+# Python source check
 cd backend && python3 -m compileall .
 
-# Check Git whitespace
+# Run frontend locally
+cd frontend && npm run dev
+
+# Frontend production build
+cd frontend && npm run build
+
+# Git whitespace check
 git diff --check
 
-# Stop application
+# Stop Docker services
 docker compose down
 
-# Rebuild application
+# Rebuild Docker services
 docker compose up --build
 ```
 
@@ -652,9 +865,10 @@ docker compose up --build
 
 ## Related Documentation
 
+- [Documentation Index](./README.md)
 - [Setup Guide](./setup.md)
 - [Architecture](./architecture.md)
 - [API Reference](./api-reference.md)
 - [Testing](./testing.md)
 - [Project Details](./project-details.md)
-- [Roadmap](./roadmap.md)
+- [Roadmap & Maintenance](./roadmap.md)

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 import LoginFooter from "../components/LoginFooter"
 import { authenticate } from "../services/auth"
@@ -79,6 +79,8 @@ function ActivityItem({
 }
 
 function Login({ onLogin }: LoginProps) {
+  const navigate = useNavigate()
+
   const [loginForm, setLoginForm] = useState<LoginForm>({
     username: "",
     password: "",
@@ -111,6 +113,8 @@ function Login({ onLogin }: LoginProps) {
         username: "",
         password: "",
       })
+
+      navigate("/dashboard")
     } catch {
       setLoginError(
         "Login failed. Check your username and password and try again."

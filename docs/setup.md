@@ -2,40 +2,44 @@
 
 ## Overview
 
-This guide explains how to run PartsPilot locally using either a standard development environment or Docker Compose.
+This guide explains how to run PartsPilot locally for development.
 
 PartsPilot consists of:
 
 - React and TypeScript frontend
 - FastAPI backend
 - PostgreSQL database
+- Docker / Docker Compose
 
-Two primary development workflows are supported:
+The primary development workflow uses:
 
-1. Run the frontend and backend locally.
-2. Run the complete application with Docker Compose.
+```text
+PostgreSQL → Docker
+FastAPI    → Local
+React/Vite → Local
+```
+
+The application can also be run using Docker Compose.
 
 ---
 
-## Prerequisites
+# Prerequisites
 
-For local development:
+Install:
 
 - Git
 - Python 3
 - pip
 - Node.js
 - npm
-- PostgreSQL
-
-For containerised development:
-
 - Docker
 - Docker Compose
 
+A separate local PostgreSQL installation is not required when using the Docker database.
+
 ---
 
-## Clone the Repository
+# Clone the Repository
 
 ```bash
 git clone https://github.com/Iris408/partspilot.git
@@ -46,7 +50,7 @@ cd partspilot
 
 # Environment Configuration
 
-PartsPilot uses environment variables for frontend configuration, database connections, and authentication.
+PartsPilot uses environment variables for database connections, authentication, and frontend API configuration.
 
 Real `.env` files, passwords, database credentials, API keys, and production secrets must not be committed to Git.
 
@@ -54,27 +58,31 @@ Real `.env` files, passwords, database credentials, API keys, and production sec
 
 ## Frontend Environment
 
-Create a `.env` file inside `frontend/`:
+Create:
 
-```env
-VITE_API_URL=http://localhost:8000
+```text
+frontend/.env
 ```
 
-This configuration is used when the FastAPI backend is running locally on port `8000`.
-
-For the deployed frontend, please use the deployed backend URL:
+For the current local development environment:
 
 ```env
-VITE_API_URL=https://inventory-management-system-1wcw.onrender.com
+VITE_API_URL=http://localhost:8001
 ```
+
+Vite uses this value when sending requests to the FastAPI backend.
 
 ---
 
 ## Backend Environment
 
-Create a `.env` file inside `backend/`.
+Create:
 
-The backend requires configuration similar to:
+```text
+backend/.env
+```
+
+The backend requires configuration for areas such as:
 
 ```env
 DATABASE_URL=
@@ -83,13 +91,68 @@ ALGORITHM=
 ACCESS_TOKEN_EXPIRE_MINUTES=
 ```
 
-Authentication secrets and database credentials should be configured for the environment in which PartsPilot is running.
+Use environment-specific values rather than committing credentials to the repository.
+
+When FastAPI runs locally and PostgreSQL runs through the PartsPilot Docker configuration, the database is accessible through:
+
+```text
+localhost:5436
+```
+
+A connection therefore follows the structure:
+
+```env
+DATABASE_URL=postgresql://USER:PASSWORD@localhost:5436/DATABASE
+```
+
+Use the database credentials configured for your local environment.
 
 ---
 
-# Local Development
+# Recommended Development Workflow
 
-## Backend
+The current PartsPilot development environment uses three services:
+
+```text
+Docker
+└── PostgreSQL
+    localhost:5436
+
+Terminal 1
+└── FastAPI
+    localhost:8001
+
+Terminal 2
+└── React / Vite
+    localhost:5173
+```
+
+---
+
+## 1. Start PostgreSQL
+
+From the project root:
+
+```bash
+docker compose up -d db
+```
+
+Check that PostgreSQL is running:
+
+```bash
+docker compose ps
+```
+
+The database container exposes PostgreSQL as:
+
+```text
+Host:      localhost:5436
+Container: 5432
+```
+
+---
+
+## 2. Start FastAPI
 
 Move into the backend directory:
 
@@ -97,7 +160,7 @@ Move into the backend directory:
 cd backend
 ```
 
-Create a Python virtual environment:
+Create a virtual environment if required:
 
 ```bash
 python3 -m venv .venv
@@ -109,57 +172,38 @@ Activate it on macOS/Linux:
 source .venv/bin/activate
 ```
 
-Install the dependencies:
+Install dependencies:
 
 ```bash
 python3 -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-> Depending on the local Python installation, commands may use either `python` or `python3`.
-
----
-
-## Local PostgreSQL Connection
-
-When FastAPI is running directly on the host machine, the database connection should use the host-accessible PostgreSQL address and port.
-
-Example:
-
-```env
-DATABASE_URL=postgresql://USER:PASSWORD@localhost:5436/DATABASE
-```
-
-The exact port depends on the local PostgreSQL configuration.
-
-The important distinction is that `localhost` refers to the host machine when the backend itself is also running on the host.
-
----
-
-## Run FastAPI
-
-From `backend/`:
+Start FastAPI:
 
 ```bash
-uvicorn main:app --reload --port 8000
+uvicorn main:app --reload --port 8001
 ```
 
 If required:
 
 ```bash
-python3 -m uvicorn main:app --reload --port 8000
+python3 -m uvicorn main:app --reload --port 8001
 ```
 
-The local API is available at:
+The backend is available at:
 
 | Service | URL |
 | --- | --- |
-| API | `http://localhost:8000` |
-| Swagger | `http://localhost:8000/docs` |
+| API | `http://localhost:8001` |
+| Swagger | `http://localhost:8001/docs` |
+| OpenAPI | `http://localhost:8001/openapi.json` |
 
 ---
 
-## Frontend
+## 3. Start the Frontend
+
+Open a second terminal.
 
 From the project root:
 
@@ -179,74 +223,85 @@ Start Vite:
 npm run dev
 ```
 
-The frontend development server is available at:
+The frontend is available at:
 
 ```text
-http://localhost:5174
+http://localhost:5173
 ```
 
-The FastAPI backend must also be running for API-dependent functionality to work.
+The FastAPI backend and PostgreSQL database must also be running for API-dependent application functionality.
 
 ---
 
-# Docker Compose
+# Local Services
 
-Docker Compose provides the easiest way to run the complete PartsPilot development environment.
+The completed development environment should look like:
 
-The Compose environment starts:
-
-- React / Vite frontend
-- FastAPI API
-- PostgreSQL database
-
-From the project root:
-
-```bash
-docker compose up --build
-```
-
-To run the services in the background:
-
-```bash
-docker compose up --build -d
-```
-
----
-
-## Docker Services
-
-When running through Docker Compose:
-
-| Service | Host URL |
+| Service | Location |
 | --- | --- |
-| Frontend | `http://localhost:5174` |
-| Backend API | `http://localhost:8001` |
+| Frontend | `http://localhost:5173` |
+| FastAPI | `http://localhost:8001` |
 | Swagger | `http://localhost:8001/docs` |
-
-The frontend runs on port `5173` inside its container and is mapped to port `5174` on the host.
-
-The FastAPI service runs on its internal container port and is exposed through port `8001` on the host.
+| PostgreSQL | `localhost:5436` |
 
 ---
 
-# PostgreSQL and Docker Networking
+# PostgreSQL
 
-Database configuration differs between local and Docker execution.
+PartsPilot uses PostgreSQL for persistent application data.
+
+The current database contains tables for:
+
+```text
+users
+items
+suppliers
+```
+
+The database can be accessed directly through the running Docker container.
+
+Example:
+
+```bash
+docker compose exec db psql -U inventory_user -d partspilot_db
+```
+
+Useful PostgreSQL command:
+
+```text
+\dt
+```
+
+This lists the tables in the current database.
+
+Exit PostgreSQL with:
+
+```text
+\q
+```
+
+---
+
+# Docker Networking
+
+Database configuration differs depending on whether FastAPI runs on the host or inside Docker.
 
 This distinction is important.
 
-## Local Backend
+## FastAPI Running Locally
 
 When FastAPI runs directly on the host:
 
 ```text
 FastAPI
-   │
-   ▼
-localhost:<PostgreSQL host port>
+localhost:8001
+      │
+      ▼
+PostgreSQL
+localhost:5436
 ```
 
-A local connection may therefore resemble:
+The database connection uses the host-accessible PostgreSQL port:
 
 ```env
 DATABASE_URL=postgresql://USER:PASSWORD@localhost:5436/DATABASE
@@ -254,13 +309,13 @@ DATABASE_URL=postgresql://USER:PASSWORD@localhost:5436/DATABASE
 
 ---
 
-## Docker Backend
+## FastAPI Running in Docker
 
-When FastAPI runs inside Docker Compose, `localhost` refers to the FastAPI container itself.
+Inside Docker, `localhost` refers to the current container.
 
 It does **not** refer to the PostgreSQL container.
 
-The backend must instead connect using the PostgreSQL Compose service name:
+Containers should communicate using their Docker Compose service names:
 
 ```text
 FastAPI container
@@ -272,61 +327,75 @@ FastAPI container
 PostgreSQL container
 ```
 
-A Docker database connection therefore resembles:
+The corresponding connection follows the structure:
 
 ```env
 DATABASE_URL=postgresql://USER:PASSWORD@db:5432/DATABASE
 ```
 
-PostgreSQL uses its internal container port `5432` for communication between Compose services.
+PostgreSQL's internal container port remains:
 
-Host port mappings are only required when accessing PostgreSQL from outside the Docker network.
+```text
+5432
+```
+
+The host mapping to `5436` is used when software running outside Docker needs to connect to the database.
 
 ---
 
-# Verify the Docker Environment
+# Docker Compose
 
-Check the current service state:
+PartsPilot also supports Docker Compose for containerised development.
+
+Build and start the configured services:
+
+```bash
+docker compose up --build
+```
+
+Run them in the background:
+
+```bash
+docker compose up --build -d
+```
+
+Check service state:
 
 ```bash
 docker compose ps
 ```
 
-All required application services should be running and healthy.
-
-Check the API:
+Validate the Compose configuration:
 
 ```bash
-curl http://localhost:8001/
+docker compose config --quiet
 ```
 
-Open Swagger:
+The exact exposed ports depend on the current `docker-compose.yml`.
+
+For the authoritative container configuration, refer directly to:
 
 ```text
-http://localhost:8001/docs
+docker-compose.yml
 ```
 
 ---
 
 # Restarting PartsPilot
 
-Stop the environment:
+Stop the Docker environment:
 
 ```bash
 docker compose down
 ```
 
-Rebuild and restart:
+Restart:
 
 ```bash
-docker compose up --build
+docker compose up -d db
 ```
 
----
-
-## Force Recreate
-
-When Dockerfiles, Compose configuration, dependencies, or environment configuration have changed:
+For a complete rebuild:
 
 ```bash
 docker compose down
@@ -337,21 +406,17 @@ docker compose up --build --force-recreate
 
 # Resetting PostgreSQL Data
 
-Docker volumes persist PostgreSQL data between normal container restarts.
+Docker volumes preserve PostgreSQL data between normal container restarts.
 
-To remove the containers and their associated Compose-managed volumes:
+To remove containers and Compose-managed volumes:
 
 ```bash
 docker compose down --volumes
 ```
 
-Then rebuild:
+Then rebuild or restart the required services.
 
-```bash
-docker compose up --build
-```
-
-> **Warning:** removing the PostgreSQL volume deletes locally persisted database data. Back up any data that needs to be retained before resetting the volume.
+> **Warning:** Removing the PostgreSQL volume deletes locally persisted database data. Back up anything that needs to be retained before removing the volume.
 
 ---
 
@@ -369,6 +434,7 @@ pytest
 ## Python Validation
 
 ```bash
+cd backend
 python3 -m compileall .
 ```
 
@@ -393,21 +459,19 @@ docker compose config --quiet
 git diff --check
 ```
 
-If there is no output from `git diff --check` this means that the check passed.
+No output from `git diff --check` indicates that the check passed.
 
-For the complete testing and CI workflow, please see [Testing](./testing.md).
+For the complete testing and CI workflow, see [Testing](./testing.md).
 
 ---
 
 # Stopping PartsPilot
 
-Stop the Docker environment:
+Stop Docker services while preserving the PostgreSQL volume:
 
 ```bash
 docker compose down
 ```
-
-This preserves the PostgreSQL volume.
 
 To also remove persistent Compose volumes:
 
@@ -415,7 +479,31 @@ To also remove persistent Compose volumes:
 docker compose down -v
 ```
 
-Use the volume removal command carefully when working with local data.
+Use volume removal carefully when working with local data.
+
+---
+
+# Deployment Configuration
+
+The React frontend is currently hosted on Vercel.
+
+The FastAPI backend and PostgreSQL database are not currently publicly deployed.
+
+The frontend API URL is controlled through:
+
+```env
+VITE_API_URL=
+```
+
+For local development:
+
+```env
+VITE_API_URL=http://localhost:8001
+```
+
+When a public backend is deployed, the production Vercel environment should instead use the public HTTPS API URL.
+
+Do not hard-code environment-specific API addresses into frontend application code.
 
 ---
 
@@ -423,12 +511,15 @@ Use the volume removal command carefully when working with local data.
 
 Common setup problems include:
 
+- PostgreSQL container is not running
 - Incorrect PostgreSQL host or port
 - Using `localhost` from inside a Docker container
 - Missing environment variables
 - Existing Docker volumes containing older database state
 - Port conflicts with other development projects
 - Frontend API URL pointing to the wrong backend port
+- FastAPI running on a different port than `VITE_API_URL`
+- PostgreSQL schema or tables not matching the current application
 
 See [Troubleshooting](./troubleshooting.md) for detailed diagnostic steps.
 
@@ -436,9 +527,10 @@ See [Troubleshooting](./troubleshooting.md) for detailed diagnostic steps.
 
 ## Related Documentation
 
+- [Documentation Index](./README.md)
 - [Project Details](./project-details.md)
 - [Architecture](./architecture.md)
 - [API Reference](./api-reference.md)
 - [Testing](./testing.md)
-- [Roadmap](./roadmap.md)
+- [Roadmap & Maintenance](./roadmap.md)
 - [Troubleshooting](./troubleshooting.md)

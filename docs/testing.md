@@ -2,9 +2,11 @@
 
 ## Overview
 
-PartsPilot uses automated tests, build validation, and GitHub Actions CI to help detect regressions across the backend, frontend, and containerised application.
+PartsPilot uses automated tests, build validation, Docker validation, and GitHub Actions CI to help detect regressions across the backend, frontend, and containerised application.
 
-The current testing strategy focuses on establishing reliable validation of core behaviour before expanding into broader integration and frontend test coverage.
+PartsPilot v2.0.0 is feature complete and is now in maintenance.
+
+Testing will continue to improve during maintenance, with priority given to protecting existing application behaviour and preventing regressions.
 
 ---
 
@@ -19,8 +21,9 @@ PartsPilot currently includes:
 - GitHub Actions CI
 - Local Python validation
 - Docker Compose configuration validation
+- Manual responsive and application-flow testing
 
-Automated test coverage is still being expanded as the project moves toward maintenance.
+Automated coverage can continue to expand during maintenance without reopening the project's feature-development cycle.
 
 ---
 
@@ -32,7 +35,7 @@ Backend tests are located in:
 backend/tests/
 ```
 
-The test suite uses:
+The backend test suite uses:
 
 ```text
 pytest
@@ -40,11 +43,15 @@ pytest
 
 Tests should focus on behaviour that could cause application regressions, including:
 
+- Authentication
 - API endpoints
 - Inventory operations
-- Authentication
-- Validation
+- Supplier operations
+- Request validation
+- Search and filtering
+- Sorting and pagination
 - Analytics
+- Error handling
 - Database-dependent behaviour
 
 ---
@@ -76,21 +83,15 @@ When the API container is running:
 docker compose exec api pytest
 ```
 
-This allows the backend test suite to be executed within the containerised environment.
+This executes the backend test suite inside the containerised environment.
 
 ---
 
 # API Testing
 
-FastAPI provides interactive Swagger/OpenAPI documentation that can also be used for manual API verification.
+FastAPI provides interactive Swagger/OpenAPI documentation that can be used for manual API verification.
 
-### Local
-
-```text
-http://localhost:8000/docs
-```
-
-### Docker
+### Local Development
 
 ```text
 http://localhost:8001/docs
@@ -101,6 +102,7 @@ Swagger is useful for manually checking:
 - Authentication
 - Request schemas
 - Inventory endpoints
+- Supplier endpoints
 - Query parameters
 - Analytics endpoints
 - Validation responses
@@ -129,7 +131,34 @@ The build process helps identify problems including:
 - Invalid imports
 - Build-time configuration problems
 
-Frontend component and interaction testing remains future work.
+---
+
+## Manual Frontend Testing
+
+PartsPilot's main application flows should also be manually checked when relevant changes are made.
+
+Important flows include:
+
+- Public landing page
+- Login
+- Demo access
+- Protected routing
+- Dashboard
+- Inventory CRUD
+- Inventory search
+- Inventory filtering
+- Inventory sorting
+- Inventory pagination
+- Supplier CRUD
+- Supplier search and filtering
+- Reports
+- CSV export
+- Settings
+- Logout
+
+Responsive behaviour should be checked across both desktop and mobile layouts.
+
+Manual testing is particularly useful for interaction and layout behaviour that is not currently covered by automated frontend tests.
 
 ---
 
@@ -160,7 +189,7 @@ docker compose exec api python -m compileall .
 
 ## Compose Configuration
 
-Before starting the environment, Docker Compose configuration can be validated with:
+Docker Compose configuration can be validated with:
 
 ```bash
 docker compose config --quiet
@@ -172,7 +201,7 @@ No output indicates that the Compose configuration is valid.
 
 ## Build Validation
 
-The complete application can be rebuilt with:
+Application images can be rebuilt with:
 
 ```bash
 docker compose build
@@ -184,33 +213,34 @@ Or started with a fresh build:
 docker compose up --build
 ```
 
-This helps detect:
+This can detect problems including:
 
 - Invalid Dockerfiles
 - Missing files
 - Dependency installation failures
 - Frontend build problems
 - Backend image build problems
+- Invalid container configuration
 
 ---
 
 ## Runtime Verification
 
-After starting PartsPilot:
+After starting the required PartsPilot services:
 
 ```bash
 docker compose ps
 ```
 
-Confirm that the required services are running and healthy.
+Confirm that the expected containers are running.
 
-The API can then be checked with:
+When FastAPI is running locally on the current development port, the API can be checked with:
 
 ```bash
 curl http://localhost:8001/
 ```
 
-Swagger should also be available at:
+Swagger is available at:
 
 ```text
 http://localhost:8001/docs
@@ -220,7 +250,7 @@ http://localhost:8001/docs
 
 # GitHub Actions
 
-PartsPilot currently uses separate CI workflows for the main application areas.
+PartsPilot uses separate CI workflows for the main application areas.
 
 ```text
 Push / Pull Request
@@ -239,7 +269,7 @@ Push / Pull Request
 
 The backend workflow validates the Python application and runs the automated backend test suite.
 
-Its purpose is to catch backend regressions before changes are merged.
+Its purpose is to detect backend regressions before changes are merged.
 
 ---
 
@@ -247,13 +277,13 @@ Its purpose is to catch backend regressions before changes are merged.
 
 The frontend workflow installs the required Node dependencies and performs a production build.
 
-This verifies that the React and TypeScript application can compile successfully.
+This verifies that the React and TypeScript application compiles successfully.
 
 ---
 
 ## Docker CI
 
-The Docker workflow validates that the application images can be built successfully.
+The Docker workflow validates the application's container configuration and build process.
 
 This provides an additional infrastructure-level check alongside the backend and frontend workflows.
 
@@ -263,9 +293,9 @@ This provides an additional infrastructure-level check alongside the backend and
 
 Not every change requires every available check.
 
-Before committing, run the checks relevant to the code that changed.
+Run the checks relevant to the code being modified.
 
-### Backend changes
+## Backend Changes
 
 ```bash
 cd backend
@@ -273,21 +303,21 @@ pytest
 python3 -m compileall .
 ```
 
-### Frontend changes
+## Frontend Changes
 
 ```bash
 cd frontend
 npm run build
 ```
 
-### Docker changes
+## Docker Changes
 
 ```bash
 docker compose config --quiet
 docker compose build
 ```
 
-### Repository-wide check
+## Repository-Wide Check
 
 From the project root:
 
@@ -301,39 +331,70 @@ No output from `git diff --check` means no whitespace errors were detected.
 
 # Testing Strategy
 
-PartsPilot's testing strategy is incremental.
+PartsPilot's testing strategy prioritises important application behaviour rather than adding tests solely to increase a coverage percentage.
 
-The priority is to protect important application behaviour rather than adding tests solely to increase a coverage percentage.
-
-Higher-priority areas include:
+The highest-priority areas are:
 
 1. Authentication
-2. Inventory CRUD operations
-3. Request validation
-4. Search and filtering
-5. Sorting and pagination
-6. Inventory analytics
-7. Error handling
+2. Inventory CRUD
+3. Supplier CRUD
+4. Request validation
+5. Search and filtering
+6. Sorting and pagination
+7. Inventory analytics
+8. Error handling
 
-Tests should be added alongside important bug fixes and new functionality where practical.
+Tests should also be added when bugs are fixed if an automated regression test can reasonably protect against the same issue returning.
 
 ---
 
-# Future Testing
+# Maintenance Testing
 
-Planned testing improvements include:
+PartsPilot is now in maintenance, so testing improvements should primarily strengthen the existing application.
 
-- Expanded FastAPI endpoint coverage
-- Authentication tests
+Appropriate maintenance work includes:
+
+- Expanding FastAPI endpoint coverage
+- Authentication regression tests
 - Inventory CRUD tests
+- Supplier CRUD tests
 - Analytics endpoint tests
 - Validation and error-case tests
 - Database integration tests
-- Frontend component tests
-- Frontend interaction tests
-- Improved Docker runtime validation
+- CI improvements
+- Docker runtime validation
+- Tests covering previously discovered bugs
 
-Testing will continue to develop gradually as PartsPilot moves into maintenance.
+Frontend component or interaction testing may also be introduced later where it provides clear value.
+
+These improvements are not requirements for PartsPilot v2.0.0 to remain feature complete.
+
+---
+
+# Regression Testing
+
+When fixing a bug, the preferred workflow is:
+
+```text
+Reproduce bug
+     │
+     ▼
+Identify cause
+     │
+     ▼
+Apply smallest relevant fix
+     │
+     ▼
+Run existing validation
+     │
+     ▼
+Add regression test where practical
+     │
+     ▼
+Confirm behaviour
+```
+
+This helps prevent maintenance work from introducing unrelated changes.
 
 ---
 
@@ -374,6 +435,7 @@ Common failures may include:
 - Test collection errors
 - Environment configuration issues
 - Docker build failures
+- Database configuration problems
 
 See [Troubleshooting](./troubleshooting.md) for broader diagnostic guidance.
 
@@ -381,9 +443,10 @@ See [Troubleshooting](./troubleshooting.md) for broader diagnostic guidance.
 
 ## Related Documentation
 
+- [Documentation Index](./README.md)
 - [Project Details](./project-details.md)
 - [Architecture](./architecture.md)
 - [API Reference](./api-reference.md)
 - [Setup Guide](./setup.md)
-- [Roadmap](./roadmap.md)
+- [Roadmap & Maintenance](./roadmap.md)
 - [Troubleshooting](./troubleshooting.md)

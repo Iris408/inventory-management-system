@@ -6,64 +6,39 @@
 
 ### Automotive Inventory Management & Analytics Platform
 
-PartsPilot is a production-style full-stack inventory platform built with FastAPI, PostgreSQL, React, TypeScript, Docker, and Power BI.
+PartsPilot is a full-stack automotive inventory platform built with React, TypeScript, FastAPI, PostgreSQL, Docker, and Power BI.
 
-It provides authenticated inventory management, stock monitoring, operational analytics, and business intelligence across an automotive parts dataset.
-
-## Key Features
-
-- Authenticated inventory management
-- Create, view, update, and delete inventory items
-- Search, filtering, sorting, and pagination
-- In-stock, low-stock, and out-of-stock tracking
-- Inventory value and category analytics
-- Dashboard summary metrics
-- PostgreSQL-backed automotive inventory dataset
-- Power BI reporting and analytics
-- Swagger/OpenAPI documentation
-- Docker Compose development environment
-- Backend, frontend, and Docker CI
+It combines authenticated inventory and supplier management with stock monitoring, operational analytics, reporting, and business intelligence.
 
 ## Current Status
 
-**Core full-stack platform: Complete and deployed** ✅
+**v2.0.0 — Feature complete and moving into maintenance**
 
-PartsPilot is available as a live demonstration with a sample automotive inventory dataset.
+| Area | Status | Area | Status |
+| --- | --- | --- | --- |
+| Full-stack application | ✅ Complete | Responsive UI | ✅ Complete |
+| JWT authentication | ✅ Working | PostgreSQL | ✅ Connected |
+| Inventory management | ✅ Complete | Supplier management | ✅ Complete |
+| Dashboard analytics | ✅ Complete | Reports & CSV export | ✅ Complete |
+| Power BI dashboard | ✅ Complete | Docker Compose | ✅ Working |
+| Backend CI | ✅ Passing | Frontend CI | ✅ Passing |
+| Docker CI | ✅ Passing | Frontend deployment | ✅ Live |
+| Backend deployment | ⏳ Pending | Maintenance | 🔧 Active |
 
-The Power BI analytics dashboard is complete. Current development is focused on final frontend polish, completing the remaining application pages, and expanding automated test coverage before PartsPilot moves primarily into maintenance.
+## Features
 
-| Area | Status |
-| --- | --- |
-| Full-stack application | ✅ Complete |
-| PostgreSQL database | ✅ Connected |
-| JWT authentication | ✅ Working |
-| Inventory management | ✅ Working |
-| Application analytics | ✅ Working |
-| Docker Compose | ✅ Working |
-| GitHub Actions CI | ✅ Working |
-| Deployment | ✅ Live |
-| Power BI dashboard | ✅ Complete |
+- JWT-authenticated application access
+- Automotive inventory CRUD
+- Supplier management
+- Search, filtering, sorting, and pagination
+- Low-stock and out-of-stock monitoring
+- Operational dashboard and category insights
+- Inventory valuation and reporting
+- CSV report export
+- Power BI inventory analytics
+- Responsive desktop and mobile interfaces
 
-## Live Demo
-
-| Service | Link |
-| --- | --- |
-| Frontend | [PartsPilot Dashboard](https://inventory-management-system-iris408.vercel.app/) |
-| Backend API | [PartsPilot API](https://inventory-management-system-1wcw.onrender.com/) |
-| Swagger Docs | [API Documentation](https://inventory-management-system-1wcw.onrender.com/docs) |
-
-> The deployed URLs retain the project's original Inventory Management System hostname.
-
-### Demo Account
-
-| Field | Credential |
-| --- | --- |
-| Username | `demo_recruiter` |
-| Password | `InventoryDemo2026!` |
-
-The demo account uses sample inventory data and is intended for portfolio demonstration.
-
-## Technology Stack
+## Tech Stack
 
 | Area | Technologies |
 | --- | --- |
@@ -73,105 +48,52 @@ The demo account uses sample inventory data and is intended for portfolio demons
 | Analytics | Power BI |
 | Infrastructure | Docker, Docker Compose |
 | CI/CD | GitHub Actions |
-| Deployment | Render, Vercel |
-
-## Architecture
-
-```text
-React + TypeScript
-        │
-        │ REST API
-        ▼
-     FastAPI
-        │
-     SQLAlchemy
-        │
-        ▼
-   PostgreSQL
-        │
-        ▼
-     Power BI
-```
-
-The React application communicates with the FastAPI REST API, while SQLAlchemy provides the persistence layer over PostgreSQL.
-
-Power BI provides a separate reporting and business intelligence layer over PartsPilot's inventory data.
-
-For a more detailed technical breakdown, see the [Project Details](./docs/project-details.md).
+| Hosting | Vercel |
 
 ## Screenshots
 
-| Dashboard | Inventory Management | Mobile | API |
-| --- | --- | --- | --- |
-| ![Dashboard](screenshots/01-dashboard-overview.png) | ![Inventory](screenshots/04-search-filter-sort.png) | ![Mobile](screenshots/05-mobile-dashboard.png) | ![Swagger API Docs](screenshots/06-api-docs.png) |
+| Dashboard | Inventory | Mobile |
+| --- | --- | --- |
+| ![Dashboard](screenshots/01-dashboard-overview.png) | ![Inventory](screenshots/04-search-filter-sort.png) | ![Mobile](screenshots/05-mobile-dashboard.png) |
 
-### Power BI Inventory Analytics
+### Power BI Analytics
 
 ![PartsPilot Power BI Inventory Analytics Dashboard](screenshots/07-powerbi-inventory-analytics.png)
 
-## Quick Start
+## Live Frontend
 
-Clone the repository:
+[Open PartsPilot](https://inventory-management-system-iris408.vercel.app/)
+
+> The frontend is deployed on Vercel. Public backend deployment is currently pending.
+
+## Quick Start
 
 ```bash
 git clone https://github.com/Iris408/partspilot.git
 cd partspilot
+docker compose up -d db
 ```
 
-Start the application with Docker Compose:
-
-```bash
-docker compose up --build
-```
-
-Services are then available at:
-
-| Service | URL |
-| --- | --- |
-| Frontend | `http://localhost:5174` |
-| API | `http://localhost:8000` |
-| Swagger | `http://localhost:8000/docs` |
-
-For local development and configuration, see the [Setup Guide](./docs/setup.md).
-
-## Testing and CI
-
-GitHub Actions validates the backend, frontend, and Docker environment on pushes and pull requests.
-
-Current workflows cover:
-
-- Backend automated tests
-- Frontend production build
-- Docker build validation
-
-Run backend tests locally:
+Start the API:
 
 ```bash
 cd backend
-pytest
+uvicorn main:app --reload --port 8001
 ```
 
-Run the frontend production build:
+Start the frontend:
 
 ```bash
 cd frontend
-npm run build
+npm install
+npm run dev
 ```
 
-## Project Structure
-
-```text
-partspilot/
-├── backend/
-├── frontend/
-├── powerbi/
-├── docs/
-├── screenshots/
-├── .github/workflows/
-├── docker-compose.yml
-├── LICENSE
-└── README.md
-```
+| Service | URL |
+| --- | --- |
+| Frontend | `http://localhost:5173` |
+| API | `http://localhost:8001` |
+| Swagger | `http://localhost:8001/docs` |
 
 ## Documentation
 
@@ -179,29 +101,25 @@ Detailed engineering documentation is available in [`docs/`](./docs/).
 
 | Document | Description |
 | --- | --- |
-| [Setup](./docs/setup.md) | Local development, environment configuration, Docker, and testing |
-| [API Reference](./docs/api-reference.md) | Authentication, inventory, and analytics endpoints |
-| [Project Details](./docs/project-details.md) | Architecture, implementation decisions, limitations, and future development |
+| [Documentation Index](./docs/README.md) | Technical documentation overview |
+| [API Reference](./docs/api-reference.md) | Authentication, inventory, supplier, and analytics endpoints |
+| [Architecture](./docs/architecture.md) | Full-stack application architecture |
+| [Project Details](./docs/project-details.md) | Technical decisions, implementation details, and limitations |
+| [Setup](./docs/setup.md) | Local development and environment setup |
+| [Testing](./docs/testing.md) | Automated testing and CI |
+| [Troubleshooting](./docs/troubleshooting.md) | Common development issues and fixes |
+| [Roadmap](./docs/roadmap.md) | Release history and maintenance direction |
 
-Power BI-specific documentation is maintained in [`powerbi/`](./powerbi/).
+## Project Summary
 
-## Roadmap
+PartsPilot was built as a full-stack automotive engineering project covering API development, relational data persistence, authentication, frontend application development, responsive UI, analytics, business intelligence, Docker, testing, and CI/CD.
 
-Current development priorities:
-
-- Complete the Power BI analytics dashboard
-- Expand operational reporting
-- Increase automated test coverage
-- Final inventory workflow polish
-
-Longer-term development includes supplier management, expanded role-based access, reporting/export improvements, localisation, and production infrastructure improvements.
-
-See the project documentation for more detailed development plans.
-
-## License
-
-This project is licensed under the terms of the [MIT License](./LICENSE).
+v2.0.0 completes the project's primary feature-development cycle. Future work is focused on maintenance, automation, testing, dependency updates, and bug fixes.
 
 ## Author
 
 Built by [Iris408](https://github.com/Iris408)
+
+## License
+
+This project is licensed under the [MIT License](./LICENSE).

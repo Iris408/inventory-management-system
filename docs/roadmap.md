@@ -2,359 +2,216 @@
 
 ## Overview
 
-PartsPilot is being developed incrementally from an inventory CRUD application into a production-style automotive inventory management and analytics platform.
+PartsPilot has completed its primary feature-development cycle.
 
-The core full-stack application is complete and deployed.
+What began as an automotive inventory CRUD application has developed into a full-stack inventory management and analytics platform covering authentication, inventory, suppliers, operational reporting, responsive frontend development, PostgreSQL persistence, Docker, CI, and Power BI.
 
-Current development is focused on final analytics, testing, documentation, and product polish before PartsPilot transitions primarily into maintenance.
+**PartsPilot v2.0.0 is feature complete and has moved into maintenance.**
 
 ---
 
-## Current Platform
-
-### Core Full-Stack Application
+# v2.0.0 — Feature Complete
 
 **Status: Complete** ✅
 
-Current capabilities include:
+v2.0.0 represents the final planned feature release of the current PartsPilot project.
+
+The completed application includes:
 
 - React and TypeScript frontend
 - FastAPI REST API
 - PostgreSQL persistence
 - SQLAlchemy integration
 - JWT authentication
+- Protected application routes
 - Inventory CRUD operations
-- Product search
-- Category filtering
-- Sorting
-- Pagination
-- Stock status tracking
-- Inventory value calculations
+- Supplier CRUD operations
+- Search and filtering
+- Sorting and pagination
+- Stock status monitoring
+- Inventory valuation
+- Dashboard analytics
 - Category analytics
-- Dashboard summary metrics
-- Recent inventory tracking
+- Reports interface
+- CSV report export
+- Power BI analytics dashboard
+- Responsive desktop and mobile interfaces
 - Swagger/OpenAPI documentation
-- Docker Compose environment
+- Docker Compose development environment
 - Backend CI
 - Frontend CI
 - Docker CI
-- Live frontend deployment
-- Live backend deployment
+- Vercel frontend deployment
 
-The core PartsPilot application is portfolio-ready.
-
----
-
-# Current Development Phase
-
-## Power BI Analytics
-
-**Status: Complete** ✅
-
-The current priority is completing PartsPilot's dedicated business intelligence layer.
-
-The PartsPilot Power BI inventory analytics dashboard is complete.
-
-The report currently includes:
-
-- Total products
-- Total stock quantity
-- Low-stock product count
-- Total inventory value
-- Inventory value by category
-- Product distribution by stock status
-- Stock quantity by category
-- Average unit price by category
-- Category filtering
-- Stock-status filtering
-
-The dashboard uses the current automotive inventory dataset exported from PartsPilot's PostgreSQL database.
+The FastAPI backend and PostgreSQL database are not currently publicly deployed.
 
 ---
 
-## Automated Testing
-
-**Status: In Progress** 🚧
-
-Initial backend automated testing has been introduced with `pytest`.
-
-Current validation also includes:
-
-- Backend CI
-- Frontend production build validation
-- Docker build validation
-- Docker Compose configuration validation
-
-Testing will continue to expand around important application behaviour.
-
-Priority areas include:
-
-- Authentication
-- Inventory CRUD
-- Validation
-- Search and filtering
-- Sorting and pagination
-- Analytics endpoints
-- Error handling
-
-See [Testing](./testing.md) for the current testing strategy.
-
----
-
-## Documentation Refresh
-
-**Status: In Progress** 🚧
-
-PartsPilot documentation is being reorganised so the root README remains concise while detailed engineering information is maintained separately.
-
-Documentation covers:
-
-- Architecture
-- API
-- Setup
-- Testing
-- Troubleshooting
-- Project details
-- Power BI
-- Development roadmap
-
----
-
-# Maintenance Readiness
-
-PartsPilot will move primarily into maintenance once the current completion phase is finished.
-
-The maintenance checkpoint is:
+# Release Progress
 
 ```text
-Core application
-      ✅
-      │
-      ▼
-Docker / CI
-      ✅
-      │
-      ▼
-Documentation
-      ↓
-Power BI
-      ↓
-Essential testing
-      ↓
-Final UI / UX polish
-      │
-      ▼
-Maintenance
+Core inventory application       ✅
+Authentication                   ✅
+Dashboard analytics              ✅
+Reports                          ✅
+Supplier management              ✅
+Responsive desktop/mobile UI     ✅
+Power BI dashboard               ✅
+Docker environment               ✅
+Backend CI                       ✅
+Frontend CI                      ✅
+Docker CI                        ✅
+Documentation refresh            ✅
+Frontend deployment              ✅
+Backend deployment               ⏳
+                                │
+                                ▼
+                         Maintenance
 ```
 
-PartsPilot does not need every possible inventory-management feature before reaching this stage.
+Backend deployment is an infrastructure task and does not reopen the PartsPilot feature-development cycle.
 
 ---
 
 # Maintenance Phase
 
-Once the completion checkpoint is reached, normal PartsPilot development should focus on:
+PartsPilot is now maintained rather than actively expanded.
+
+Normal maintenance work may include:
 
 - Bug fixes
 - Dependency updates
 - Security updates
-- Regression tests
+- Regression testing
+- Automated test improvements
+- CI/CD maintenance
 - Documentation corrections
 - Deployment maintenance
 - Small accessibility improvements
-- Small UI/UX improvements
-- Power BI report maintenance
-- Data corrections
+- Small UI/UX corrections
+- Power BI maintenance
+- Development workflow automation
 
-Large new features should not automatically be added during maintenance.
-
-They should only be introduced when they provide a clear engineering, portfolio, or product benefit.
+These changes should improve the reliability and maintainability of the existing application rather than substantially expand its scope.
 
 ---
 
-# Future Development
+# Testing
 
-The following capabilities remain possible future extensions rather than requirements for PartsPilot to be considered complete.
+Automated testing can continue to improve during maintenance.
 
-## Supplier Management
+Current validation includes:
 
-Potential capabilities:
+- Backend automated tests with `pytest`
+- Backend CI
+- Frontend production build validation
+- Docker build validation
+- Docker Compose configuration validation
 
-- Supplier records
-- Supplier contact information
-- Inventory-to-supplier relationships
-- Supplier filtering
-- Supplier performance information
+Future maintenance testing can prioritise existing behaviour such as:
 
----
+- Authentication
+- Inventory CRUD
+- Supplier CRUD
+- Request validation
+- Search and filtering
+- Sorting and pagination
+- Analytics endpoints
+- Error handling
 
-## Reporting and Export
+Increasing test coverage does not require another feature-development phase.
 
-Potential capabilities:
-
-- Inventory reports
-- CSV export
-- PDF reports
-- Stock reports
-- Inventory valuation reports
-
-Power BI should remain the primary business intelligence layer where appropriate.
-
----
-
-## Role-Based Access Control
-
-Potential roles could include:
-
-- Administrator
-- Inventory Manager
-- Standard User
-
-Permissions could restrict sensitive inventory and administrative operations.
-
-This should only be introduced when the application's user model requires it.
+See [Testing](./testing.md) for the current testing strategy.
 
 ---
 
-## Authentication Improvements
+# Deployment
 
-Potential improvements include:
+The React frontend is currently deployed on Vercel.
 
-- Refresh tokens
-- Improved session handling
-- Token expiry handling
-- Stronger logout behaviour
-- More complete production authentication configuration
+Public deployment of the FastAPI backend and PostgreSQL database remains pending.
 
----
+Completing backend deployment would make the full authenticated application publicly accessible and may be completed as a maintenance/release infrastructure task.
 
-## Frontend Improvements
-
-Potential improvements include:
-
-- Loading skeletons
-- Toast notifications
-- Improved mobile navigation
-- Dark mode
-- Additional accessibility improvements
-- Expanded Reports page
-- Expanded Suppliers page
-- Expanded Settings page
-
-These are enhancements rather than blockers for the current portfolio version.
+Deployment work should not introduce unrelated application features.
 
 ---
 
-## Observability
+# Deliberately Out of Scope
 
-Potential production-style improvements include:
+PartsPilot does not need to become a complete enterprise inventory or warehouse-management system.
 
-- Structured application logging
-- Health monitoring
-- Error tracking
-- Application metrics
-- Uptime monitoring
+The following capabilities are deliberately outside the current project scope:
 
-PartsPilot does not need to reproduce the dedicated infrastructure-monitoring capabilities already demonstrated by Pulse.
-
----
-
-## Internationalisation
-
-Longer-term product improvements could include:
-
-- Localisation
-- Multiple currencies
-- Regional formatting
-
-These features are currently deferred.
-
----
-
-## Cloud Infrastructure
-
-AWS remains a possible future infrastructure exercise.
-
-Potential areas include:
-
-- Backend deployment
-- Managed PostgreSQL
-- Container deployment
-- Environment configuration
-- Logging and monitoring
-
-Cloud migration is not required for PartsPilot's current completion milestone.
-
----
-
-# Deliberately Deferred
-
-The following areas should not delay PartsPilot's move into maintenance:
-
-- Complex enterprise RBAC
-- Large supplier-management workflows
-- Advanced purchasing systems
+- Purchasing systems
 - Order management
 - Warehouse management
+- Complex supplier-to-item relationships
+- Supplier performance systems
+- Complex enterprise RBAC
+- Large administrative systems
 - Microservices
 - Kubernetes
-- Complex cloud architecture
 - Real-time event processing
 - AI features
+- Complex cloud architecture
 
-Adding these would substantially increase project scope without being necessary to demonstrate PartsPilot's current engineering goals.
+Other potential product expansions such as localisation, multiple currencies, advanced session management, and additional reporting formats are also not planned for the current PartsPilot lifecycle.
 
----
-
-# Definition of Portfolio Complete
-
-PartsPilot can be considered fully complete for its current portfolio purpose when:
-
-- Core inventory workflows remain stable
-- Backend tests pass
-- Frontend production build passes
-- Docker environment runs correctly
-- GitHub Actions workflows pass
-- Live deployment remains usable
-- Documentation reflects the current architecture
-- Power BI dashboard is polished and documented
-- Major UI issues are resolved
-- Recruiter/demo screenshots are current
-
-At that point:
-
-```text
-Active Development
-       │
-       ▼
-Portfolio Complete
-       │
-       ▼
-Maintenance
-```
-
-Future development should then be intentional rather than continuous.
+They should only be reconsidered if there is a concrete future requirement.
 
 ---
 
-# Development Principles
+# Maintenance Principles
 
 Future PartsPilot work should prioritise:
 
 1. Reliability
 2. Maintainability
-3. Testability
-4. Clear documentation
-5. Useful analytics
+3. Security
+4. Testability
+5. Clear documentation
 6. Accessibility
-7. Incremental development
+7. Stable deployment
 
-New technologies or features should solve a genuine problem rather than being introduced solely to increase the project's technical scope.
+New technologies or features should only be introduced when they solve a genuine maintenance, reliability, security, or deployment problem.
+
+---
+
+# Project Lifecycle
+
+```text
+Initial CRUD Application
+          │
+          ▼
+Full-Stack Development
+          │
+          ▼
+Authentication & Analytics
+          │
+          ▼
+Reporting & Power BI
+          │
+          ▼
+Supplier Management
+          │
+          ▼
+Responsive Product Polish
+          │
+          ▼
+PartsPilot v2.0.0
+          │
+          ▼
+     Maintenance
+```
+
+PartsPilot should now remain a stable flagship portfolio project while development effort moves to other projects.
 
 ---
 
 ## Related Documentation
 
+- [Documentation Index](./README.md)
 - [Project Details](./project-details.md)
 - [Architecture](./architecture.md)
 - [API Reference](./api-reference.md)

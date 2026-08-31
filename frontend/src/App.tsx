@@ -1,9 +1,5 @@
 import { useState } from "react"
-import {
-  Navigate,
-  Route,
-  Routes,
-} from "react-router-dom"
+import { Navigate, Route, Routes } from "react-router-dom"
 
 import AppLayout from "./components/layout/AppLayout"
 
@@ -11,6 +7,7 @@ import Dashboard from "./pages/Dashboard"
 import Inventory from "./pages/Inventory"
 import Landing from "./pages/Landing"
 import Login from "./pages/Login"
+import Register from "./pages/Register"
 import Reports from "./pages/Reports"
 import Settings from "./pages/Settings"
 import Suppliers from "./pages/Suppliers"
@@ -49,6 +46,11 @@ function App() {
             <Login onLogin={setToken} />
           )
         }
+      />
+
+      <Route
+        path="/register"
+        element={<Register />}
       />
 
       {/* =========================================

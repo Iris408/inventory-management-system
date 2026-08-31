@@ -592,7 +592,13 @@ export default function Landing({
             <strong>Product</strong>
             <a href="#features">Features</a>
             <a href="#demo">Demo</a>
-            <Link to="/login">Sign in</Link>
+            <button
+              type="button"
+              onClick={() => navigate("/login")}
+              className="landing__button landing__button--secondary"
+            >
+              Sign in
+            </button>
           </div>
 
           <div>

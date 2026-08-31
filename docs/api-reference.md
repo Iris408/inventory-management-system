@@ -2,31 +2,27 @@
 
 ## Overview
 
-PartsPilot provides a REST API built with FastAPI for authentication, inventory management, and inventory analytics.
+PartsPilot provides a REST API built with FastAPI for authentication, automotive inventory management, supplier management, and operational analytics.
 
-The API is consumed by the React frontend and can also be explored interactively through FastAPI's Swagger/OpenAPI interface.
+The API is consumed by the React frontend and can also be explored interactively through FastAPI's generated Swagger/OpenAPI documentation.
 
 ---
 
-## Base URLs
+## Base URL
 
 ### Local Development
-
-```text
-http://localhost:8000
-```
-
-### Docker Compose
 
 ```text
 http://localhost:8001
 ```
 
-### Deployed API
+### Swagger Documentation
 
 ```text
-https://inventory-management-system-1wcw.onrender.com
+http://localhost:8001/docs
 ```
+
+The PartsPilot API is not currently publicly deployed.
 
 ---
 
@@ -40,80 +36,80 @@ PartsPilot uses JWT-based authentication for protected API operations.
 | --- | --- | --- |
 | POST | `/auth/login` | Authenticate a user and receive an access token |
 
-After successful authentication, the frontend stores the access token and includes it with protected API requests.
+The login endpoint accepts user credentials and returns a JWT access token after successful authentication.
 
-Authenticated requests use the following header:
+The React frontend stores the token and includes it with subsequent protected requests.
 
 ```text
 Authorization: Bearer <access_token>
 ```
 
+Protected inventory and supplier operations require a valid token.
+
 ---
 
 # Inventory
 
-## Inventory Endpoints
+## Inventory CRUD
 
 | Method | Endpoint | Description |
 | --- | --- | --- |
 | GET | `/items` | Retrieve inventory items |
-| POST | `/items` | Create a new inventory item |
+| POST | `/items` | Create an inventory item |
 | GET | `/items/{id}` | Retrieve an individual inventory item |
 | PUT | `/items/{id}` | Update an inventory item |
 | DELETE | `/items/{id}` | Delete an inventory item |
 
-Inventory operations support the main PartsPilot CRUD workflow used by the frontend dashboard.
+These endpoints provide the main inventory management workflow used by the PartsPilot frontend.
 
 ---
 
 ## Inventory Data
 
-Inventory records contain information including:
+Inventory records represent automotive parts and include information such as:
 
 ```text
 id
 name
+sku
 category
 quantity
+minimum_stock
 price
 created_at
 updated_at
 ```
 
-Additional values such as stock status and inventory value can be calculated from the underlying inventory data.
+The application uses this data to determine operational information such as stock status and inventory value.
 
 ---
 
 # Search, Filtering, Sorting and Pagination
 
-The inventory API supports querying larger datasets through search, filtering, sorting, and pagination.
+`GET /items` supports querying the inventory dataset using search, filtering, sorting, and pagination.
 
 Current capabilities include:
 
-- Search by product name
+- Search by part name
 - Filter by category
 - Sort inventory results
 - Paginate inventory results
 
-Sorting is used for fields such as:
+Sorting can be used with inventory fields such as price and quantity.
 
-- ID
-- Price
-- Quantity
-
-The exact query parameters and available values can be inspected through the interactive Swagger documentation:
+The exact query parameters and currently supported values can be inspected through Swagger:
 
 ```text
-/docs
+http://localhost:8001/docs
 ```
 
-This documentation is generated directly from the current FastAPI implementation and should be treated as the authoritative reference for request parameters.
+The generated OpenAPI documentation should be treated as the authoritative reference for request parameters and schemas.
 
 ---
 
-# Analytics
+# Inventory Analytics
 
-PartsPilot provides dedicated analytics endpoints used by the application dashboard.
+PartsPilot provides dedicated inventory analytics endpoints used by the Dashboard and Reports interfaces.
 
 | Method | Endpoint | Description |
 | --- | --- | --- |
@@ -125,7 +121,65 @@ PartsPilot provides dedicated analytics endpoints used by the application dashbo
 | GET | `/items/highest-value` | Retrieve highest-value inventory items |
 | GET | `/items/recent` | Retrieve recently added inventory items |
 
-These endpoints support dashboard metrics and operational inventory insights without requiring the frontend to calculate all analytics independently.
+These endpoints allow the backend to provide operational and analytical information without requiring the frontend to calculate all metrics independently.
+
+PartsPilot uses this data for features including:
+
+- Inventory totals
+- Stock status
+- Inventory valuation
+- Category analysis
+- Recent inventory activity
+- Reporting
+
+---
+
+# Suppliers
+
+PartsPilot v2.0.0 includes supplier management through a dedicated set of protected API endpoints.
+
+## Supplier CRUD
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| GET | `/suppliers` | Retrieve suppliers |
+| GET | `/suppliers/{supplier_id}` | Retrieve an individual supplier |
+| POST | `/suppliers` | Create a supplier |
+| PUT | `/suppliers/{supplier_id}` | Update a supplier |
+| DELETE | `/suppliers/{supplier_id}` | Delete a supplier |
+
+---
+
+## Supplier Data
+
+Supplier records contain information including:
+
+```text
+id
+name
+contact_name
+email
+phone
+website
+category
+status
+notes
+created_at
+updated_at
+```
+
+Supplier status values are used by the frontend to distinguish suppliers such as active, preferred, and inactive suppliers.
+
+The frontend provides additional supplier workflows including:
+
+- Search
+- Status filtering
+- Category filtering
+- Add supplier
+- Edit supplier
+- Delete confirmation
+
+Search and filtering are currently handled by the frontend after supplier data is retrieved from the API.
 
 ---
 
@@ -141,24 +195,12 @@ These endpoints support dashboard metrics and operational inventory insights wit
 
 # Swagger / OpenAPI
 
-FastAPI automatically generates interactive API documentation.
+FastAPI automatically generates interactive API documentation from the application routes and Pydantic schemas.
 
-### Local
-
-```text
-http://localhost:8000/docs
-```
-
-### Docker
+### Local Swagger
 
 ```text
 http://localhost:8001/docs
-```
-
-### Deployed
-
-```text
-https://inventory-management-system-1wcw.onrender.com/docs
 ```
 
 Swagger can be used to:
@@ -170,21 +212,24 @@ Swagger can be used to:
 - Inspect validation requirements
 - Authenticate against protected endpoints
 
+Because Swagger is generated directly from the FastAPI application, it should be treated as the most current reference for exact request and response schemas.
+
 ---
 
 # Request Validation
 
-FastAPI validates incoming API requests before inventory operations are performed.
+FastAPI and Pydantic validate incoming API requests before data is persisted.
 
-Invalid request data is rejected with an appropriate HTTP response rather than being written directly to PostgreSQL.
-
-Validation helps protect:
+Validation covers areas such as:
 
 - Required fields
 - Expected data types
 - Inventory request structure
+- Supplier request structure
 
-The current validation rules can be inspected through the generated OpenAPI documentation.
+Invalid request data is rejected with an appropriate HTTP response rather than being written directly to PostgreSQL.
+
+Exact validation requirements can be inspected through the generated OpenAPI documentation.
 
 ---
 
@@ -198,16 +243,16 @@ PartsPilot uses standard HTTP response codes.
 | `201 Created` | Resource created successfully |
 | `401 Unauthorized` | Authentication is missing or invalid |
 | `404 Not Found` | Requested resource could not be found |
-| `422 Unprocessable Entity` | Request failed FastAPI validation |
+| `422 Unprocessable Entity` | Request failed FastAPI/Pydantic validation |
 | `500 Internal Server Error` | Unexpected server-side failure |
 
-Exact responses may vary by endpoint.
+Exact responses vary by endpoint and operation.
 
 ---
 
-# Data Flow
+# API Data Flow
 
-A typical authenticated inventory request follows this path:
+A typical authenticated request follows this path:
 
 ```text
 React Frontend
@@ -217,19 +262,21 @@ React Frontend
       ▼
    FastAPI
       │
-      │ Validation / Authentication
-      ▼
- Application Logic
-      │
-      │ SQLAlchemy
-      ▼
-  PostgreSQL
-      │
-      ▼
- API Response
-      │
-      ▼
-React Frontend
+      ├── Authentication
+      └── Request Validation
+              │
+              ▼
+      Application Logic
+              │
+              │ SQLAlchemy
+              ▼
+         PostgreSQL
+              │
+              ▼
+         API Response
+              │
+              ▼
+       React Frontend
 ```
 
 For broader system design information, see [Architecture](./architecture.md).
@@ -238,9 +285,10 @@ For broader system design information, see [Architecture](./architecture.md).
 
 # Related Documentation
 
-- [Project Details](./project-details.md)
+- [Documentation Index](./README.md)
 - [Architecture](./architecture.md)
+- [Project Details](./project-details.md)
 - [Setup Guide](./setup.md)
 - [Testing](./testing.md)
-- [Roadmap](./roadmap.md)
 - [Troubleshooting](./troubleshooting.md)
+- [Roadmap & Maintenance](./roadmap.md)
